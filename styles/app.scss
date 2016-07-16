@@ -1,0 +1,61 @@
+@import "../vendor/bootstrap/scss/bootstrap";
+
+html, body, #main-container, #main-row, #map, #sidebar {
+    height: 100%;
+}
+
+#main-container {
+    @include make-container();
+}
+
+#main-row {
+    @include make-row();
+}
+
+#map {
+}
+
+#sidebar {
+    font-family: helvetica;
+    overflow: scroll;
+    padding: 25px 30px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+    background: #fefefe;
+    font-size: 0.8rem;
+}
+
+nav {
+    margin-bottom: 20px;
+}
+
+#info {
+    h1 {
+        font-size: 1.8rem;
+        font-weight: bold;
+        letter-spacing: -0.1rem;
+    }
+
+    h1, p {
+        text-transform: uppercase;
+    }
+
+    a {
+        color: #373a3c;
+
+        &:hover, &:focus {
+            text-decoration: none;
+            color: #373a3c;
+        }
+    }
+}
+
+.freq {
+    h2 {
+        font-size: 1rem;
+        font-weight: bold;
+    }
+
+    p {
+        text-align: right;
+    }
+}
