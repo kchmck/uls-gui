@@ -76,13 +76,6 @@ const INFO = {
     "X": "other",
 };
 
-// const COMMON = {
-//     "A3E": "broadcast AM",
-//     "F8E": "broadcast FM",
-//     "F1B": "FSK",
-//     "F2D": "AFSK",
-// };
-
 function degToRad(deg) { return deg * (Math.PI / 180.0); }
 function sin(x) { return Math.sin(degToRad(x)); }
 function cos(x) { return Math.cos(degToRad(x)); }

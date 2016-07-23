@@ -8,10 +8,6 @@ import serve from "koa-static";
 import favicon from "koa-favicon";
 import sqlite3 from "sqlite3";
 
-// import React from "react";
-// import {createMemoryHistory} from 'history';
-// import {renderToString} from 'react-dom/server'
-
 let db = new sqlite3.Database("../scrape-fcc/scrape/records.db",
                               sqlite3.OPEN_READONLY);
 
@@ -103,26 +99,6 @@ app.use(route.get("/api/records", function*() {
 }));
 
 app.use(function*() {
-    // let history = createMemoryHistory(this.path);
-    // let store = createStore(history)(reducer);
-    // let router = createRoutes(store);
-    //
-    // yield initStore(store);
-    //
-    // let routes = yield new Promise((resolve, reject) => {
-    //     history.listen(loc => resolve(router.handlePath(loc.pathname)));
-    // });
-    //
-    // let routed = yield* routes;
-    //
-    // let content = yield new Promise((resolve, reject) => {
-    //     if (routed) {
-    //         resolve(renderToString(<Main store={store} />));
-    //     } else {
-    //         resolve("404");
-    //     }
-    // });
-
     yield this.render("index", {});
 });
 
