@@ -34,7 +34,7 @@ const Freq = ({rkey, fkey, freq, power, rxPower, emissions}) => (
     <div className="freq">
         <div className="row">
             <h2 className="col-xs-10">
-                <a href={freqUrl(rkey, fkey)}>{freq / 1.0e6}MHz</a>
+                <a href={freqUrl(rkey, fkey)}>{dispFreq(freq)}MHz</a>
             </h2>
             <p className="col-xs-2" title={`${power / 1.0e3}W`}>
                 {calcSReading(rxPower)}
