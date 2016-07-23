@@ -1,3 +1,4 @@
+import LazyInput from "lazy-input";
 import React from "react";
 import classNames from "classnames";
 import {Link} from "@kchmck/redux-history-utils";
@@ -68,44 +69,46 @@ const MaybeInfo = ({active}) => <div id="info">
     {active && <Info /> || <NoInfo />}
 </div>;
 
-const onFilterChange = (changeFilter, proc) => onEvent(e => {
-    let val = parseFloat(e.target.value);
-    return changeFilter(e.target.id, proc ? proc(val) : val);
-});
+const onFilterChange = (id, changeFilter, proc) =>
+    onEvent(e => changeFilter(id, proc(parseFloat(e.target.value))));
 
 const procFreq = freq => freq * 1.0e6;
 const dispFreq = freq => freq / 1.0e6;
 
-const Filters = connect(
-    ({app}) => app.editFilters,
-    actions
-)(
-    ({freqLower, freqUpper, rxPowerLower, changeFilter, commitFilters}) => (
+const defaultDisp = x => x;
+const defaultProc = x => x;
+
+const FilterInput = connect(({app}, {id}) => ({
+    val: app.editFilters[id],
+}), actions)(
+    ({val, id, changeFilter, disp=defaultDisp, proc=defaultProc}) => (
+        <LazyInput type="text" id={id} className="form-control"
+            value={disp(val)}
+            onChange={onFilterChange(id, changeFilter, proc)} />
+    )
+);
+
+const Filters = connect(null, actions)(
+    ({commitFilters}) => (
         <form onSubmit={onEvent(commitFilters)}>
             <fieldset className="form-group">
                 <label htmlFor="freqLower">Lower frequency</label>
                 <div className="input-group">
-                    <input type="text" className="form-control" id="freqLower"
-                        value={dispFreq(freqLower)}
-                        onChange={onFilterChange(changeFilter, procFreq)} />
+                    <FilterInput id="freqLower" disp={dispFreq} proc={procFreq} />
                     <div className="input-group-addon">MHz</div>
                 </div>
             </fieldset>
             <fieldset className="form-group">
                 <label htmlFor="freqUpper">Upper frequency</label>
                 <div className="input-group">
-                    <input type="text" className="form-control" id="freqUpper"
-                        value={dispFreq(freqUpper)}
-                        onChange={onFilterChange(changeFilter, procFreq)} />
+                    <FilterInput id="freqUpper" disp={dispFreq} proc={procFreq} />
                     <div className="input-group-addon">MHz</div>
                 </div>
             </fieldset>
             <fieldset className="form-group">
                 <label htmlFor="rxPowerLower">Receive power</label>
                 <div className="input-group">
-                    <input type="text" className="form-control" id="rxPowerLower"
-                        value={rxPowerLower}
-                        onChange={onFilterChange(changeFilter)} />
+                    <FilterInput id="rxPowerLower" />
                     <div className="input-group-addon">dBm</div>
                 </div>
             </fieldset>
