@@ -26,7 +26,7 @@ export default ({dispatch, getState}) => {
                 return Promise.resolve();
             }
 
-            let {locs, markers} = getState().app;
+            let {locs, markers} = getState();
             let idx = locs.findIndex(loc => loc.lkey == id);
 
             if (idx < 0) {

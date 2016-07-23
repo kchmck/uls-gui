@@ -29,10 +29,10 @@ export const setFilters = ({freqLower, freqUpper, rxPowerLower}) => {
 };
 
 const withRecomputeMap = action => (dispatch, getState) => {
-    let oldFilters = getState().app.filters;
+    let oldFilters = getState().filters;
 
     return dispatch(action).then(() => {
-        if (!shallowEquals(getState().app.filters, oldFilters))
+        if (!shallowEquals(getState().filters, oldFilters))
             dispatch(recomputeMap());
     });
 };
@@ -44,7 +44,7 @@ const recomputeMap = () => dispatch => Promise.all([
 
 export const recomputeLocs = () => (dispatch, getState) => dispatch({
     type: "setLocs",
-    locs: computeLocs(getState().app),
+    locs: computeLocs(getState()),
 });
 
 const computeLocs = ({allLocs, filters}) => {
@@ -72,7 +72,7 @@ const clearMarkers = () => ({type: "clearMarkers"});
 
 const recomputeMarkers = () => (dispatch, getState) => dispatch({
     type: "setMarkers",
-    markers: computeMarkers(dispatch, getState().app),
+    markers: computeMarkers(dispatch, getState()),
 });
 
 const computeMarkers = (dispatch, {google, map, locs}) => {
@@ -117,7 +117,7 @@ export const changeFilter = (filter, value) => ({
 });
 
 export const commitFilters = () => (dispatch, getState) => {
-    let {editFilters} = getState().app;
+    let {editFilters} = getState();
 
     return dispatch(historyPush({search: `?${qs.stringify(editFilters)}`}));
 };

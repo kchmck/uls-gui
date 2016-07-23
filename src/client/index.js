@@ -8,14 +8,14 @@ import {createHistory} from "history";
 import App from "../shared/components/App";
 import createRoutes from "../shared/routes";
 import createStore from "../shared/store";
-import createReducer from "../shared/reducer";
+import reducer from "../shared/reducer";
 import {CENTER, DEFAULT_ZOOM} from "../shared/consts";
 import {initMap, initLocs} from "../shared/actions/app";
 
 import {loadGoogleMaps} from "./google-maps";
 
 let hist = createHistory();
-let store = createStore(hist)(createReducer);
+let store = createStore(hist)(reducer);
 let router = createRoutes(store);
 
 Promise.all([

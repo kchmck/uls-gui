@@ -18,7 +18,7 @@ const onEvent = fn => e => {
     return fn(e);
 };
 
-const Heading = connect(({app}) => app.curLoc)(
+const Heading = connect(({curLoc}) => curLoc)(
     ({rkey, lkey, callsign, desc}) => <div>
         <h1><a href={locUrl(rkey, lkey)}>{callsign}</a></h1>
         <p>{desc}</p>
@@ -48,9 +48,9 @@ const Freq = ({rkey, fkey, freq, power, rxPower, emissions}) => (
     </div>
 );
 
-const Freqs = connect(({app}) => ({
-    rkey: app.curLoc.rkey,
-    freqs: app.curLoc.freqs,
+const Freqs = connect(({curLoc}) => ({
+    rkey: curLoc.rkey,
+    freqs: curLoc.freqs,
 }))(
     ({rkey, freqs}) => <div>
         {Object.values(freqs).map((freq, key) =>
@@ -78,8 +78,8 @@ const dispFreq = freq => freq / 1.0e6;
 const defaultDisp = x => x;
 const defaultProc = x => x;
 
-const FilterInput = connect(({app}, {id}) => ({
-    val: app.editFilters[id],
+const FilterInput = connect(({editFilters}, {id}) => ({
+    val: editFilters[id],
 }), actions)(
     ({val, id, changeFilter, disp=defaultDisp, proc=defaultProc}) => (
         <LazyInput type="text" id={id} className="form-control"
@@ -127,8 +127,8 @@ const Tabs = ({children}) => <nav>
     <ul className="nav nav-tabs">{children}</ul>
 </nav>;
 
-const SidebarTabs = connect(({app}) => ({
-    curTab: app.curTab,
+const SidebarTabs = connect(({curTab}) => ({
+    curTab,
 }))(
     ({curTab}) => (
         <Tabs>
@@ -139,9 +139,9 @@ const SidebarTabs = connect(({app}) => ({
     )
 );
 
-const SidebarPanes = connect(({app}) => ({
-    curTab: app.curTab,
-    curLoc: app.curLoc,
+const SidebarPanes = connect(({curTab, curLoc}) => ({
+    curTab,
+    curLoc,
 }))(
     ({curTab, curLoc}) => <div>
         {curTab == "filters" && <Filters />}
