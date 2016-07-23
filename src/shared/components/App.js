@@ -73,8 +73,8 @@ const onFilterChange = (changeFilter, proc) => onEvent(e => {
     return changeFilter(e.target.id, proc ? proc(val) : val);
 });
 
-const procFreq = x => x * 1.0e6;
-const dispFreq = x => x / 1.0e6;
+const procFreq = freq => freq * 1.0e6;
+const dispFreq = freq => freq / 1.0e6;
 
 const Filters = connect(
     ({app}) => app.editFilters,
