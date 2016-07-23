@@ -153,8 +153,8 @@ const Main = () => <div>
 
 const App = props => (
     <Provider {...props}>
-        <Main {...props} />
+        <Main />
     </Provider>
 );
 
-export default connect(({app}) => app)(App);
+export default App;
