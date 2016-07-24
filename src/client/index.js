@@ -6,11 +6,12 @@ import axios from "axios";
 import {createHistory} from "history";
 
 import App from "../shared/components/App";
+import Overlay from "../shared/components/Overlay";
 import createRoutes from "../shared/routes";
 import createStore from "../shared/store";
 import reducer from "../shared/reducer";
 import {CENTER, DEFAULT_ZOOM} from "../shared/consts";
-import {initMap, initLocs} from "../shared/actions";
+import {initMap, initLocs, setProjection} from "../shared/actions";
 import {loadGoogleMaps} from "../shared/google-maps";
 
 let hist = createHistory();
@@ -26,6 +27,18 @@ Promise.all([
             center: CENTER,
             zoom: DEFAULT_ZOOM,
         });
+
+        let overlay = Object.assign(new google.maps.OverlayView(), {
+            onAdd() {
+                ReactDOM.render(<Overlay store={store} />,
+                    this.getPanes().overlayMouseTarget);
+            },
+            draw() {
+                store.dispatch(setProjection(this.getProjection()));
+            },
+        });
+
+        overlay.setMap(map);
 
         store.dispatch(initMap(google, map, new google.maps.Marker({
             map,

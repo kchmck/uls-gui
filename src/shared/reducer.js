@@ -3,6 +3,7 @@ const initialState = {
     map: null,
     allLocs: null,
     centerMarker: null,
+    locs: [],
     curLoc: null,
     filters: {
         freqLower: 0,
@@ -10,11 +11,8 @@ const initialState = {
         rxPowerLower: -121.0,
     },
     editFilters: {},
-    locs: [],
-    markers: [],
-    overlay: null,
-    curMarker: null,
     curTab: "info",
+    proj: null,
 };
 
 export default function(state = initialState, action) {
@@ -29,8 +27,18 @@ export default function(state = initialState, action) {
             centerMarker: action.centerMarker,
         });
     break;
-    case "initLocs": s.allLocs = action.locs; break;
-    case "selectLoc": s.curLoc = s.locs[action.loc]; break;
+    case "initLocs":
+        s.allLocs = action.locs;
+    break;
+    case "setLocs":
+        s.locs = action.locs;
+    break;
+    case "selectLoc":
+        s.curLoc = s.locs[action.idx];
+    break;
+    case "setTab":
+        s.curTab = action.tab;
+    break;
     case "setFilters": {
         let freqLower = parseFloat(action.freqLower);
         let freqUpper = parseFloat(action.freqUpper);
@@ -44,26 +52,6 @@ export default function(state = initialState, action) {
 
         s.editFilters = Object.assign({}, s.filters);
     } break;
-    case "setLocs": s.locs = action.locs; break;
-    case "setMarker": s.curMarker = action.marker; break;
-    case "hideMarker":
-        if (s.markers[s.curMarker]) {
-            s.markers[s.curMarker].classList.remove("selected");
-        }
-    break;
-    case "highlightMarker":
-        if (s.markers[s.curMarker]) {
-            s.markers[s.curMarker].classList.add("selected");
-        }
-    break;
-    case "setOverlay": s.overlay = action.overlay; break;
-    case "clearOverlay":
-        if (s.overlay) {
-            s.overlay.setMap(null);
-        }
-    break;
-    case "setMarkers": s.markers = action.markers; break;
-    case "setTab": s.curTab = action.tab; break;
     case "changeFilter":
         if (isNaN(action.value)) {
             break;
@@ -73,7 +61,11 @@ export default function(state = initialState, action) {
             [action.filter]: action.value,
         };
     break;
-    default: return state;
+    case "setProjection":
+        s.proj = action.proj;
+    break;
+    default:
+        return state;
     }
 
     return s;

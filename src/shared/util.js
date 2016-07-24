@@ -122,10 +122,6 @@ export function createPathLossCalc(exp) {
     return (freq, dist) => FACTOR * Math.log10(freq * dist) + OFFSET;
 }
 
-export function calcSat(dbm) {
-    return Math.min(Math.max((dbm + 127.0) / 54.0, 0.0), 1.0);
-}
-
 export function hsvToRgb(h, s, v) {
     let i = Math.floor(h * 6);
     let f = h * 6 - i;

@@ -20,34 +20,3 @@ export function loadGoogleMaps({key, version}) {
 
     return deferred;
 }
-
-export function createOverlay(google, map, onClick, createMarkers) {
-    let overlay = new google.maps.OverlayView();
-    overlay.setMap(map);
-
-    let layer = document.createElement("div");
-    layer.addEventListener("click", e => onClick(e.target));
-
-    function onAdd() {
-        this.getPanes().overlayMouseTarget.appendChild(layer);
-    }
-
-    function onRemove() {
-        layer.parentNode.removeChild(layer);
-    }
-
-    function draw() {
-        let frag = document.createDocumentFragment();
-
-        createMarkers(this.getProjection(), frag.appendChild.bind(frag));
-
-        layer.innerHTML = "";
-        layer.appendChild(frag);
-    }
-
-    return Object.assign(overlay, {
-        onAdd,
-        onRemove,
-        draw,
-    });
-}

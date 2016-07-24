@@ -3,12 +3,11 @@ import qs from "query-string";
 
 import {
     setFilters,
-    selectMarker,
     selectLoc,
     setTab,
 } from "./actions";
 
-export default ({dispatch, getState}) => {
+export default ({dispatch}) => {
     return createRouter()
         .addCommon("/*", (_, loc) => {
             let {freqLower, freqUpper, rxPowerLower} = qs.parse(loc.search);
@@ -20,21 +19,12 @@ export default ({dispatch, getState}) => {
         .addCommon("/info/:param*", () => dispatch(setTab("info")))
         .addRoute("/info/", () => Promise.resolve())
         .addRoute("/info/:id", id => {
-            id = parseInt(id);
+            let lkey = parseInt(id);
 
-            if (isNaN(id)) {
-                return Promise.resolve();
+            if (isNaN(lkey)) {
+                return Promise.reject("malformed location key");
             }
 
-            let idx = getState().locs.findIndex(loc => loc.lkey == id);
-
-            if (idx < 0) {
-                return Promise.resolve();
-            }
-
-            return Promise.all([
-                dispatch(selectMarker(idx)),
-                dispatch(selectLoc(idx)),
-            ]);
+            return dispatch(selectLoc(lkey));
         });
 };
