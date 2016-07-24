@@ -11,8 +11,7 @@ import createStore from "../shared/store";
 import reducer from "../shared/reducer";
 import {CENTER, DEFAULT_ZOOM} from "../shared/consts";
 import {initMap, initLocs} from "../shared/actions";
-
-import {loadGoogleMaps} from "./google-maps";
+import {loadGoogleMaps} from "../shared/google-maps";
 
 let hist = createHistory();
 let store = createStore(hist)(reducer);
