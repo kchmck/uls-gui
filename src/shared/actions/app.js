@@ -33,7 +33,7 @@ const withRecomputeMap = action => (dispatch, getState) => {
 
     return dispatch(action).then(() => {
         if (!shallowEquals(getState().filters, oldFilters))
-            dispatch(recomputeMap());
+            return dispatch(recomputeMap());
     });
 };
 

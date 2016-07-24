@@ -35,7 +35,7 @@ Promise.all([
     }),
     axios.get("/api/records").then(({data}) => store.dispatch(initLocs(data))),
 ]).then(() => {
-    router.handlePath(hist.getCurrentLocation());
+    return router.handlePath(hist.getCurrentLocation());
 }).then(() => {
     hist.listen(router.handlePath);
     ReactDOM.render(<App store={store} />, document.getElementById("sidebar"));
