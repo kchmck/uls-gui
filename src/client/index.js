@@ -10,7 +10,7 @@ import createRoutes from "../shared/routes";
 import createStore from "../shared/store";
 import reducer from "../shared/reducer";
 import {CENTER, DEFAULT_ZOOM} from "../shared/consts";
-import {initMap, initLocs} from "../shared/actions/app";
+import {initMap, initLocs} from "../shared/actions";
 
 import {loadGoogleMaps} from "./google-maps";
 

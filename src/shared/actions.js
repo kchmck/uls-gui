@@ -3,7 +3,7 @@ import shallowEquals from "shallow-equals";
 import {historyPush} from "@kchmck/redux-history-utils";
 import {sprintf} from "sprintf-js";
 
-import {CENTER, CUTOFF_DIST} from "../consts";
+import {CENTER, CUTOFF_DIST} from "./consts";
 
 import {
     calcDist,
@@ -12,7 +12,7 @@ import {
     milliWattToDbm,
     calcSat,
     hsvToRgb,
-} from "../util";
+} from "./util";
 
 let calcPathLoss = createPathLossCalc(3.0);
 

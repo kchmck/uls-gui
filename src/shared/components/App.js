@@ -5,7 +5,7 @@ import {Link} from "@kchmck/redux-history-utils";
 import {Provider} from "react-redux";
 import {connect} from "react-redux";
 
-import * as actions from "../actions/app";
+import * as actions from "../actions";
 import {locUrl, freqUrl} from "../urls";
 
 import {

@@ -6,7 +6,7 @@ import {
     selectMarker,
     selectLoc,
     setTab,
-} from "./actions/app";
+} from "./actions";
 
 export default ({dispatch, getState}) => {
     return createRouter()
