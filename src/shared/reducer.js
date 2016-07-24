@@ -62,7 +62,7 @@ export default function(state = initialState, action) {
         };
     break;
     case "setProjection":
-        s.proj = action.proj;
+        s.proj = Object.create(action.proj);
     break;
     default:
         return state;
