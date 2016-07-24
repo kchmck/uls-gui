@@ -31,6 +31,7 @@ app.use(route.get("/api/records", function*() {
               frequencies.lkey = locations.lkey and
               emissions.rkey = records.rkey and
               emissions.fkey = frequencies.fkey
+        order by records.rkey, locations.lkey, frequencies.fkey
     `;
 
     let names = yield new Promise((resolve, reject) => {
