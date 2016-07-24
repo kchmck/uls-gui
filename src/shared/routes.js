@@ -26,16 +26,15 @@ export default ({dispatch, getState}) => {
                 return Promise.resolve();
             }
 
-            let {locs, markers} = getState();
-            let idx = locs.findIndex(loc => loc.lkey == id);
+            let idx = getState().locs.findIndex(loc => loc.lkey == id);
 
             if (idx < 0) {
                 return Promise.resolve();
             }
 
             return Promise.all([
-                dispatch(selectMarker(markers[idx])),
-                dispatch(selectLoc(locs[idx])),
+                dispatch(selectMarker(idx)),
+                dispatch(selectLoc(idx)),
             ]);
         });
 };

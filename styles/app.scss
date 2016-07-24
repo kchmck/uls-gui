@@ -59,3 +59,15 @@ nav {
         text-align: right;
     }
 }
+
+.marker {
+    border: 1px solid #ffffff;
+    height: 10px;
+    width: 10px;
+    position: absolute;
+    cursor: pointer;
+
+    &.selected {
+        border-color: #a61600;
+    }
+}

@@ -4,6 +4,7 @@ import {historyPush} from "@kchmck/redux-history-utils";
 import {sprintf} from "sprintf-js";
 
 import {CENTER, CUTOFF_DIST} from "./consts";
+import {createOverlay} from "./google-maps";
 
 import {
     calcDist,
@@ -38,16 +39,16 @@ const withRecomputeMap = action => (dispatch, getState) => {
 };
 
 const recomputeMap = () => dispatch => Promise.all([
-    dispatch(clearMarkers()),
+    dispatch(clearOverlay()),
     dispatch(recomputeLocs()),
-]).then(() => dispatch(recomputeMarkers()));
+]).then(() => dispatch(recomputeOverlay()));
 
 export const recomputeLocs = () => (dispatch, getState) => dispatch({
     type: "setLocs",
     locs: computeLocs(getState()),
 });
 
-const computeLocs = ({allLocs, filters}) => {
+function computeLocs({allLocs, filters}) {
     let {freqLower, freqUpper, rxPowerLower} = filters;
 
     return allLocs
@@ -66,47 +67,59 @@ const computeLocs = ({allLocs, filters}) => {
                 .sort((a, b) => b.rxPower - a.rxPower),
         }))
         .filter(loc => loc.freqs.length > 0);
-};
+}
 
-const clearMarkers = () => ({type: "clearMarkers"});
+const clearOverlay = () => ({type: "clearOverlay"});
 
-const recomputeMarkers = () => (dispatch, getState) => dispatch({
-    type: "setMarkers",
-    markers: computeMarkers(dispatch, getState()),
+const recomputeOverlay = () => (dispatch, getState) => dispatch({
+    type: "setOverlay",
+    overlay: computeOverlay(dispatch, getState()),
 });
 
-const computeMarkers = (dispatch, {google, map, locs}) => {
-    const BASE_SYMBOL = {
-        path: google.maps.SymbolPath.CIRCLE,
-        scale: 5,
-        strokeOpacity: 1.0,
-        strokeColor: "#ffffff",
-        strokeWeight: 1,
-        fillOpacity: 1.0,
-    };
+function computeOverlay(dispatch, {google, map, locs}) {
+    return createOverlay(google, map,
+        el => {
+            dispatch(historyPush(`/info/${el.dataset.lkey}`));
+        },
+        (proj, add) => dispatch(setMarkers(locs.map(loc => {
+            let pos = proj.fromLatLngToDivPixel(new google.maps.LatLng({
+                lat: loc.lat + loc.jitterLat,
+                lng: loc.lng + loc.jitterLng,
+            }));
 
-    return locs.map(loc => {
-        let strength = calcSat(loc.freqs[0].rxPower);
-        let sat = (Math.pow(20.0, strength) - 1.0) / (20.0 - 1.0);
-        let val = 1.0 - 0.05 * sat;
+            let marker = document.createElement("div");
 
-        let marker = new google.maps.Marker({
-            map,
-            position: loc,
-            icon: Object.assign({}, BASE_SYMBOL, {
-                fillColor: sprintf("#%06x", hsvToRgb(0.0, sat, val)),
-            }),
-        });
+            marker.dataset.lkey = loc.lkey;
+            marker.className = "marker";
+            marker.style.left = `${pos.x}px`;
+            marker.style.top = `${pos.y}px`;
 
-        marker.addListener("click", () => {
-            dispatch(historyPush(`/info/${loc.lkey}`));
-        });
+            let strength = calcSat(loc.freqs[0].rxPower);
+            let sat = (Math.pow(20.0, strength) - 1.0) / (20.0 - 1.0);
+            let val = 1.0 - 0.05 * sat;
 
-        return marker;
-    });
-};
+            marker.style.background =
+                sprintf("#%06x", hsvToRgb(0.0, sat, val));
 
-export const selectMarker = nextMarker => ({type: "selectMarker", nextMarker});
+            add(marker);
+
+            return marker;
+        })))
+    );
+}
+
+export const setMarkers = markers => dispatch =>
+    dispatch({type: "setMarkers", markers})
+        .then(() => dispatch(highlightMarker()));
+
+export const selectMarker = marker => dispatch =>
+    dispatch(hideMarker())
+        .then(() => dispatch(setMarker(marker)))
+        .then(() => dispatch(highlightMarker()));
+
+export const setMarker = marker => ({type: "setMarker", marker});
+export const hideMarker = () => ({type: "hideMarker"});
+export const highlightMarker = () => ({type: "highlightMarker"});
 
 export const selectLoc = loc => ({type: "selectLoc", loc});
 
@@ -118,6 +131,5 @@ export const changeFilter = (filter, value) => ({
 
 export const commitFilters = () => (dispatch, getState) => {
     let {editFilters} = getState();
-
     return dispatch(historyPush({search: `?${qs.stringify(editFilters)}`}));
 };

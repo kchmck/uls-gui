@@ -32,7 +32,12 @@ Promise.all([
             position: CENTER,
         })));
     }),
-    axios.get("/api/records").then(({data}) => store.dispatch(initLocs(data))),
+    axios.get("/api/records").then(({data}) => store.dispatch(initLocs(
+        data.map(loc => Object.assign(loc, {
+            jitterLat: (Math.random() - 0.5) * 10.0e-3,
+            jitterLng: (Math.random() - 0.5) * 10.0e-3,
+        }))
+    ))),
 ]).then(() => {
     return router.handlePath(hist.getCurrentLocation());
 }).then(() => {
