@@ -66,8 +66,10 @@ nav {
     display: block;
     height: 10px;
     width: 10px;
+    z-index: 1000;
 
     &.active {
         border-color: #a61600;
+        z-index: 10000;
     }
 }

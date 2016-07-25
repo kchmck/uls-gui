@@ -7,7 +7,7 @@ import {sprintf} from "sprintf-js";
 
 import {hsvToRgb} from "../util";
 
-const Marker = ({loc, pos, active}) => (
+const Marker = ({loc, pos, active=false}) => (
     <Link to={`/info/${loc.lkey}`}
         className={classNames("marker", {active})}
         style={{
@@ -16,6 +16,12 @@ const Marker = ({loc, pos, active}) => (
             top: pos.y,
         }}
     />
+);
+
+const ActiveMarker = connect(({curLoc, proj}) => ({curLoc, proj}))(
+    ({curLoc, proj}) => <div>
+        {curLoc && <Marker loc={curLoc} pos={calcPos(curLoc, proj)} active={true} />}
+    </div>
 );
 
 function calcBackground(power) {
@@ -30,11 +36,10 @@ function calcSat(dbm) {
     return Math.min(Math.max((dbm + 127.0) / 54.0, 0.0), 1.0);
 }
 
-const Markers = connect(({locs, proj, curLoc}) => ({locs, proj, curLoc}))(
-    ({locs, proj, curLoc}) => <div>
+const Markers = connect(({locs, proj}) => ({locs, proj}))(
+    ({locs, proj}) => <div>
         {locs.map(loc =>
-            <Marker key={loc.lkey} loc={loc} pos={calcPos(loc, proj)}
-                active={curLoc && curLoc.lkey == loc.lkey} />)}
+            <Marker key={loc.lkey} loc={loc} pos={calcPos(loc, proj)} />)}
     </div>
 );
 
@@ -45,8 +50,13 @@ function calcPos(loc, proj) {
     });
 }
 
-const Overlay = props => <Provider {...props}>
+const AllMarkers = () => <div>
     <Markers />
+    <ActiveMarker />
+</div>;
+
+const Overlay = props => <Provider {...props}>
+    <AllMarkers />
 </Provider>;
 
 export default Overlay;
