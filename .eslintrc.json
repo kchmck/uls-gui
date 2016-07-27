@@ -25,6 +25,20 @@
             "varsIgnorePattern": "_",
             "argsIgnorePattern": "_"
         }],
-        "react/prop-types": "off"
+        "array-callback-return": "error",
+        "block-scoped-var": "error",
+        "curly": ["error", "all"],
+        "eqeqeq": "error",
+        "no-implicit-globals": "error",
+        "no-self-compare": "error",
+        "no-sequences": "error",
+        "no-unused-expressions": "error",
+        "radix": "error",
+        "no-duplicate-imports": "error",
+        "no-var": "error",
+        "no-shadow": "error",
+        "init-declarations": "error",
+        "react/prop-types": "off",
+        "react/jsx-key": "error"
     }
 }
