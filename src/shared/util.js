@@ -1,11 +1,11 @@
 export function parseBandwidth(s) {
-    if (s.length != 4) {
+    if (s.length !== 4) {
         return null;
     }
 
     let groups = /(\d*)([HKMG])(\d*)/.exec(s);
 
-    if (groups == null || groups[0].length != 4) {
+    if (groups === null || groups[0].length !== 4) {
         return null;
     }
 
@@ -13,7 +13,7 @@ export function parseBandwidth(s) {
 }
 
 export function parseEmission(em) {
-    if (em.length != 7) {
+    if (em.length !== 7) {
         return null;
     }
 

@@ -19,7 +19,7 @@ export default ({dispatch}) => {
         .addCommon("/info/:param*", () => dispatch(setTab("info")))
         .addRoute("/info/", () => Promise.resolve())
         .addRoute("/info/:id", id => {
-            let lkey = parseInt(id);
+            let lkey = parseInt(id, 10);
 
             if (isNaN(lkey)) {
                 return Promise.reject("malformed location key");

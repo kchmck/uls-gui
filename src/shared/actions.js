@@ -29,8 +29,11 @@ const withRecomputeLocs = action => (dispatch, getState) => {
     let oldFilters = getState().filters;
 
     return dispatch(action).then(() => {
-        if (!shallowEquals(getState().filters, oldFilters))
+        if (!shallowEquals(getState().filters, oldFilters)) {
             return dispatch(recomputeLocs());
+        } else {
+            return Promise.resolve();
+        }
     });
 };
 
@@ -62,7 +65,7 @@ function computeLocs({allLocs, filters}) {
 }
 
 export const selectLoc = lkey => (dispatch, getState) => {
-    let idx = getState().locs.findIndex(loc => loc.lkey == lkey);
+    let idx = getState().locs.findIndex(loc => loc.lkey === lkey);
 
     if (idx < 0) {
         return Promise.reject("location not visible");

@@ -49,14 +49,14 @@ app.use(route.get("/api/records", function*() {
 
             let {rkey, lkey, fkey} = row;
 
-            if (lkey != prevLoc) {
+            if (lkey !== prevLoc) {
                 prevLoc = lkey;
                 prevFreq = null;
 
                 let csIdx = row.title.indexOf(row.callsign);
                 let dashIdx = row.title.slice(csIdx).indexOf("-");
 
-                if (locs[lkey] && locs[lkey].rkey != rkey) {
+                if (locs[lkey] && locs[lkey].rkey !== rkey) {
                     throw new Error("lkey clash");
                 }
 
@@ -73,7 +73,7 @@ app.use(route.get("/api/records", function*() {
                 locs.push(loc);
             }
 
-            if (fkey != prevFreq) {
+            if (fkey !== prevFreq) {
                 prevFreq = fkey;
 
                 freq = {

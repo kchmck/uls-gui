@@ -1,8 +1,7 @@
 import React from "react";
 import classNames from "classnames";
 import {Link} from "@kchmck/redux-history-utils";
-import {Provider} from "react-redux";
-import {connect} from "react-redux";
+import {Provider, connect} from "react-redux";
 import {sprintf} from "sprintf-js";
 
 import {hsvToRgb} from "../util";

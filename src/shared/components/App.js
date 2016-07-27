@@ -2,8 +2,7 @@ import LazyInput from "lazy-input";
 import React from "react";
 import classNames from "classnames";
 import {Link} from "@kchmck/redux-history-utils";
-import {Provider} from "react-redux";
-import {connect} from "react-redux";
+import {Provider, connect} from "react-redux";
 
 import * as actions from "../actions";
 import {locUrl, freqUrl} from "../urls";
@@ -132,9 +131,9 @@ const SidebarTabs = connect(({curTab}) => ({
 }))(
     ({curTab}) => (
         <Tabs>
-            <Tab active={curTab == "info"} to="/info">Info</Tab>
-            <Tab active={curTab == "list"} to="/list">List</Tab>
-            <Tab active={curTab == "filters"} to="/filters">Filters</Tab>
+            <Tab active={curTab === "info"} to="/info">Info</Tab>
+            <Tab active={curTab === "list"} to="/list">List</Tab>
+            <Tab active={curTab === "filters"} to="/filters">Filters</Tab>
         </Tabs>
     )
 );
@@ -144,8 +143,8 @@ const SidebarPanes = connect(({curTab, curLoc}) => ({
     curLoc,
 }))(
     ({curTab, curLoc}) => <div>
-        {curTab == "filters" && <Filters />}
-        {curTab == "info" && <MaybeInfo active={!!curLoc} />}
+        {curTab === "filters" && <Filters />}
+        {curTab === "info" && <MaybeInfo active={!!curLoc} />}
     </div>
 );
 
