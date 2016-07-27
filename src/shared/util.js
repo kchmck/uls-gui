@@ -129,16 +129,16 @@ export function hsvToRgb(h, s, v) {
     let q = v * (1 - f * s);
     let t = v * (1 - (1 - f) * s);
 
-    var r, g, b;
-
-    switch (i % 6) {
-    case 0: r = v, g = t, b = p; break;
-    case 1: r = q, g = v, b = p; break;
-    case 2: r = p, g = v, b = t; break;
-    case 3: r = p, g = q, b = v; break;
-    case 4: r = t, g = p, b = v; break;
-    case 5: r = v, g = p, b = q; break;
-    }
+    let [r, g, b] = (function() {
+        switch (i % 6) {
+        case 0: return [v, t, p];
+        case 1: return [q, v, p];
+        case 2: return [p, v, t];
+        case 3: return [p, q, v];
+        case 4: return [t, p, v];
+        case 5: return [v, p, q];
+        }
+    })();
 
     return Math.round(r * 255) << 16 |
            Math.round(g * 255) << 8 |
