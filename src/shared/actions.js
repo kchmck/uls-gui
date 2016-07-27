@@ -20,12 +20,12 @@ export const initMap = (google, map, centerMarker) => ({
 export const initLocs = locs => ({type: "initLocs", locs});
 
 export const setFilters = ({freqLower, freqUpper, rxPowerLower}) => {
-    return withRecomputeMap({
+    return withRecomputeLocs({
         type: "setFilters", freqLower, freqUpper, rxPowerLower
     });
 };
 
-const withRecomputeMap = action => (dispatch, getState) => {
+const withRecomputeLocs = action => (dispatch, getState) => {
     let oldFilters = getState().filters;
 
     return dispatch(action).then(() => {
