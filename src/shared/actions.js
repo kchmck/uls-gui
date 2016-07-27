@@ -57,7 +57,8 @@ function computeLocs({allLocs, filters}) {
                 .filter(f => f.rxPower > rxPowerLower)
                 .sort((a, b) => b.rxPower - a.rxPower),
         }))
-        .filter(loc => loc.freqs.length > 0);
+        .filter(loc => loc.freqs.length > 0)
+        .sort((a, b) => b.freqs[0].rxPower - a.freqs[0].rxPower);
 }
 
 export const selectLoc = lkey => (dispatch, getState) => {
