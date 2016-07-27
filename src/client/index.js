@@ -40,7 +40,7 @@ Promise.all([
 
         overlay.setMap(map);
 
-        store.dispatch(initMap(google, map, new google.maps.Marker({
+        return store.dispatch(initMap(google, map, new google.maps.Marker({
             map,
             position: CENTER,
         })));
