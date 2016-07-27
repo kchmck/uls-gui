@@ -11,7 +11,7 @@ import createRoutes from "../shared/routes";
 import createStore from "../shared/store";
 import reducer from "../shared/reducer";
 import {CENTER, DEFAULT_ZOOM} from "../shared/consts";
-import {initMap, initLocs, setProjection} from "../shared/actions";
+import {initMap, initLocs, setProjection, recomputeLocs} from "../shared/actions";
 import {loadGoogleMaps} from "../shared/google-maps";
 
 let hist = createHistory();
@@ -52,6 +52,8 @@ Promise.all([
         }))
     ))),
 ]).then(() => {
+    return store.dispatch(recomputeLocs());
+}).then(() => {
     return router.handlePath(hist.getCurrentLocation());
 }).then(() => {
     hist.listen(router.handlePath);
