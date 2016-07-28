@@ -1,18 +1,15 @@
 @import "../vendor/bootstrap/scss/bootstrap";
 
-html, body, #main-container, #main-row, #map, #sidebar {
+html, body, #map-container, #map, #sidebar {
     height: 100%;
 }
 
-#main-container {
-    @include make-container();
-}
-
-#main-row {
-    @include make-row();
-}
-
-#map {
+#map-container {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 350px;
 }
 
 #sidebar {
@@ -22,6 +19,10 @@ html, body, #main-container, #main-row, #map, #sidebar {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     background: #fefefe;
     font-size: 0.8rem;
+    position: fixed;
+    width: 350px;
+    right: 0;
+    top: 0;
 }
 
 nav {
