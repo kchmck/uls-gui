@@ -18,9 +18,9 @@ const Marker = ({loc, pos, active=false}) => (
 );
 
 const ActiveMarker = connect(({curLoc, proj}) => ({curLoc, proj}))(
-    ({curLoc, proj}) => <div>
-        {curLoc && <Marker loc={curLoc} pos={calcPos(curLoc, proj)} active={true} />}
-    </div>
+    ({curLoc, proj}) => curLoc ?
+        <Marker loc={curLoc} pos={calcPos(curLoc, proj)} active={true} /> :
+        <span />
 );
 
 function calcBackground(power) {
