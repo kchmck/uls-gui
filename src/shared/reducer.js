@@ -1,4 +1,4 @@
-const initialState = {
+const INIT_STATE = {
     google: null,
     map: null,
     allLocs: null,
@@ -15,7 +15,7 @@ const initialState = {
     proj: null,
 };
 
-export default function(state = initialState, action) {
+export default function(state = INIT_STATE, action) {
     let s = Object.assign({}, state);
 
     /* eslint indent: "off" */
