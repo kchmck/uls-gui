@@ -67,9 +67,11 @@ const Info = () => <div>
 
 const NoInfo = () => <p>No location selected</p>;
 
-const MaybeInfo = ({active}) => <div id="info" className="pane">
-    {active && <Info /> || <NoInfo />}
-</div>;
+const MaybeInfo = connect(({curLoc}) => ({curLoc}))(
+    ({curLoc}) => <div id="info" className="pane">
+        {curLoc ? <Info /> : <NoInfo />}
+    </div>
+);
 
 const onFilterChange = (id, changeFilter, proc) =>
     onEvent(e => changeFilter(id, proc(parseFloat(e.target.value))));
@@ -170,14 +172,11 @@ const SidebarTabs = connect(({curTab}) => ({
     )
 );
 
-const SidebarPanes = connect(({curTab, curLoc}) => ({
-    curTab,
-    curLoc,
-}))(
-    ({curTab, curLoc}) => <div>
+const SidebarPanes = connect(({curTab}) => ({curTab}))(
+    ({curTab}) => <div>
         {curTab === "filters" && <Filters />}
         {curTab === "list" && <MaybeList />}
-        {curTab === "info" && <MaybeInfo active={!!curLoc} />}
+        {curTab === "info" && <MaybeInfo />}
     </div>
 );
 
