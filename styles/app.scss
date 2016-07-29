@@ -80,6 +80,14 @@ nav {
         border-color: #a61600;
         z-index: 10000;
     }
+
+    &.preview {
+        height: 12px;
+        width: 12px;
+        border-width: 2px;
+        border-color: #a61600;
+        z-index: 20000;
+    }
 }
 
 #list {

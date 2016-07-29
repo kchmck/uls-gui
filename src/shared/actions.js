@@ -74,6 +74,10 @@ export const selectLoc = lkey => (dispatch, getState) => {
     return dispatch({type: "selectLoc", idx});
 };
 
+export const setPreviewLoc = loc => ({type: "setPreviewLoc", loc});
+
+export const resetPreviewLoc = () => ({type: "resetPreviewLoc"});
+
 export const setTab = tab => ({type: "setTab", tab});
 
 export const changeFilter = (filter, value) => ({
@@ -86,3 +90,5 @@ export const commitFilters = () => (dispatch, getState) => {
 };
 
 export const setProjection = proj => ({type: "setProjection", proj});
+
+export const setCenter = loc => ({type: "setCenter", loc});

@@ -5,6 +5,7 @@ const INIT_STATE = {
     centerMarker: null,
     locs: [],
     curLoc: null,
+    previewLoc: null,
     filters: {
         freqLower: 0,
         freqUpper: 5000.0e6,
@@ -63,6 +64,15 @@ export default function(state = INIT_STATE, action) {
     break;
     case "setProjection":
         s.proj = Object.create(action.proj);
+    break;
+    case "setCenter":
+        s.map.setCenter(action.loc);
+    break;
+    case "setPreviewLoc":
+        s.previewLoc = action.loc;
+    break;
+    case "resetPreviewLoc":
+        s.previewLoc = null;
     break;
     default:
         return state;

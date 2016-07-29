@@ -6,9 +6,9 @@ import {sprintf} from "sprintf-js";
 
 import {hsvToRgb} from "../util";
 
-const Marker = ({loc, pos, active=false}) => (
+const Marker = ({loc, pos, active=false, preview=false}) => (
     <Link to={`/info/${loc.lkey}`}
-        className={classNames("marker", {active})}
+        className={classNames("marker", {active, preview})}
         style={{
             background: calcBackground(loc.freqs[0].rxPower),
             left: pos.x,
@@ -20,6 +20,12 @@ const Marker = ({loc, pos, active=false}) => (
 const ActiveMarker = connect(({curLoc, proj}) => ({curLoc, proj}))(
     ({curLoc, proj}) => curLoc ?
         <Marker loc={curLoc} pos={calcPos(curLoc, proj)} active={true} /> :
+        <span />
+);
+
+const PreviewMarker = connect(({previewLoc, proj}) => ({previewLoc, proj}))(
+    ({previewLoc, proj}) => previewLoc ?
+        <Marker loc={previewLoc} pos={calcPos(previewLoc, proj)} preview={true} /> :
         <span />
 );
 
@@ -52,6 +58,7 @@ function calcPos(loc, proj) {
 const AllMarkers = () => <div>
     <Markers />
     <ActiveMarker />
+    <PreviewMarker />
 </div>;
 
 const Overlay = props => <Provider {...props}>

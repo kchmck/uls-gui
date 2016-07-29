@@ -10,7 +10,10 @@ import {locUrl, freqUrl} from "../urls";
 import {
     calcSReading,
     parseEmission,
+    createDebounce,
 } from "../util";
+
+let previewDebounce = createDebounce(100);
 
 const onEvent = fn => e => {
     e.preventDefault();
@@ -116,21 +119,32 @@ const Filters = connect(null, actions)(
     )
 );
 
-const MaybeList = connect(({locs}) => ({locs}))(
-    ({locs}) => locs ?
-        <List locs={locs} /> :
+const MaybeList = connect(({locs}) => ({locs}), actions)(
+    ({locs, setCenter, setPreviewLoc, resetPreviewLoc}) => locs ?
+        <List locs={locs}
+            locHover={loc => () => previewDebounce(() => {
+                setCenter(loc);
+                setPreviewLoc(loc);
+            })}
+            locLeave={_ => () => previewDebounce(resetPreviewLoc)}
+        /> :
         <NoList />
 );
 
 const NoList = () => <p>No locations found</p>;
 
-const List = ({locs}) => (
+const List = ({locs, locHover, locLeave}) => (
     <ul id="list" className="pane">
         <p>{locs.length} locations</p>
-        {locs.map(loc => <li key={loc.lkey}>
-            <h1><Link to={`/info/${loc.lkey}`}>{loc.callsign}</Link></h1>
-            <p className="desc">{loc.desc}</p>
-        </li>)}
+        {locs.map(loc =>
+            <li key={loc.lkey}
+                onMouseEnter={locHover(loc)}
+                onMouseLeave={locLeave(loc)}
+            >
+                <h1><Link to={`/info/${loc.lkey}`}>{loc.callsign}</Link></h1>
+                <p className="desc">{loc.desc}</p>
+            </li>
+        )}
     </ul>
 );
 

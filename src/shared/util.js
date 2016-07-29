@@ -144,3 +144,12 @@ export function hsvToRgb(h, s, v) {
            Math.round(g * 255) << 8 |
            Math.round(b * 255);
 }
+
+export function createDebounce(delay) {
+    let handle = null;
+
+    return fn => {
+        clearTimeout(handle);
+        handle = setTimeout(fn, delay);
+    };
+}
