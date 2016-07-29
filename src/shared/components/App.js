@@ -20,7 +20,7 @@ const onEvent = fn => e => {
 const Heading = connect(({curLoc}) => curLoc)(
     ({rkey, lkey, callsign, desc}) => <div>
         <h1><a href={locUrl(rkey, lkey)}>{callsign}</a></h1>
-        <p>{desc}</p>
+        <p className="desc">{desc}</p>
     </div>
 );
 
@@ -64,7 +64,7 @@ const Info = () => <div>
 
 const NoInfo = () => <p>No location selected</p>;
 
-const MaybeInfo = ({active}) => <div id="info">
+const MaybeInfo = ({active}) => <div id="info" className="pane">
     {active && <Info /> || <NoInfo />}
 </div>;
 
@@ -116,6 +116,24 @@ const Filters = connect(null, actions)(
     )
 );
 
+const MaybeList = connect(({locs}) => ({locs}))(
+    ({locs}) => locs ?
+        <List locs={locs} /> :
+        <NoList />
+);
+
+const NoList = () => <p>No locations found</p>;
+
+const List = ({locs}) => (
+    <ul id="list" className="pane">
+        <p>{locs.length} locations</p>
+        {locs.map(loc => <li key={loc.lkey}>
+            <h1><Link to={`/info/${loc.lkey}`}>{loc.callsign}</Link></h1>
+            <p className="desc">{loc.desc}</p>
+        </li>)}
+    </ul>
+);
+
 const Tab = ({active, ...props}) => (
     <li className="nav-item">
         <Link className={classNames("nav-link", {active})} {...props} />
@@ -144,6 +162,7 @@ const SidebarPanes = connect(({curTab, curLoc}) => ({
 }))(
     ({curTab, curLoc}) => <div>
         {curTab === "filters" && <Filters />}
+        {curTab === "list" && <MaybeList />}
         {curTab === "info" && <MaybeInfo active={!!curLoc} />}
     </div>
 );

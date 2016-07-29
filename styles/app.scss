@@ -29,15 +29,10 @@ nav {
     margin-bottom: 20px;
 }
 
-#info {
-    h1 {
-        font-size: 1.8rem;
-        font-weight: bold;
-        letter-spacing: -0.1rem;
-    }
-
-    h1, p {
+.pane {
+    h1, h2 {
         text-transform: uppercase;
+        font-weight: bold;
     }
 
     a {
@@ -50,10 +45,22 @@ nav {
     }
 }
 
+.desc {
+    text-transform: uppercase;
+}
+
+#info {
+    h1 {
+        font-size: 1.8rem;
+        letter-spacing: -0.1rem;
+        text-align: center;
+        margin-bottom: 0.25rem;
+    }
+}
+
 .freq {
     h2 {
         font-size: 1rem;
-        font-weight: bold;
     }
 
     p {
@@ -72,5 +79,14 @@ nav {
     &.active {
         border-color: #a61600;
         z-index: 10000;
+    }
+}
+
+#list {
+    padding: 0;
+    list-style: none;
+
+    h1 {
+        font-size: 1rem;
     }
 }
