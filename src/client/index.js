@@ -27,6 +27,18 @@ Promise.all([
         let map = new google.maps.Map(document.getElementById("map"), {
             center: CENTER,
             zoom: DEFAULT_ZOOM,
+            styles: [
+                {
+                    featureType: "poi",
+                    elementType: "labels",
+                    stylers: [{visibility: "off"}]
+                },
+                {
+                    featureType: "transit",
+                    elementType: "labels",
+                    stylers: [{visibility: "off"}]
+                }
+            ]
         });
 
         let overlay = Object.assign(new google.maps.OverlayView(), {
