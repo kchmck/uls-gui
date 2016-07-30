@@ -5,26 +5,37 @@ import {
     setFilters,
     selectLoc,
     setTab,
+    setDocTitle,
 } from "./actions";
 
-export default ({dispatch}) => {
+export default ({dispatch, getState}) => {
+    function withTitle(title, fn) {
+        let titleFn = typeof title === "function" ? title : () => title;
+
+        return (...args) => fn(...args).then(() =>
+            dispatch(setDocTitle(titleFn(...args))));
+    }
+
     return createRouter()
         .addCommon("/*", (_, loc) => {
             let {freqLower, freqUpper, rxPowerLower} = qs.parse(loc.search);
             return dispatch(setFilters({freqLower, freqUpper, rxPowerLower}));
         })
-        .addRoute("/", () => Promise.resolve())
-        .addRoute("/filters", () => dispatch(setTab("filters")))
-        .addRoute("/list", () => dispatch(setTab("list")))
+        .addRoute("/", withTitle("Home", () => Promise.resolve()))
+        .addRoute("/filters", withTitle("Filters", () => dispatch(setTab("filters"))))
+        .addRoute("/list", withTitle("List", () => dispatch(setTab("list"))))
         .addCommon("/info/:param*", () => dispatch(setTab("info")))
         .addRoute("/info/", () => Promise.resolve())
-        .addRoute("/info/:id", id => {
-            let lkey = parseInt(id, 10);
+        .addRoute("/info/:id", withTitle(
+            () => `${getState().curLoc.callsign} - ${getState().curLoc.desc}`,
+            id => {
+                let lkey = parseInt(id, 10);
 
-            if (isNaN(lkey)) {
-                return Promise.reject("malformed location key");
+                if (isNaN(lkey)) {
+                    return Promise.reject("malformed location key");
+                }
+
+                return dispatch(selectLoc(lkey));
             }
-
-            return dispatch(selectLoc(lkey));
-        });
+        ));
 };

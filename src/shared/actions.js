@@ -92,3 +92,5 @@ export const commitFilters = () => (dispatch, getState) => {
 export const setProjection = proj => ({type: "setProjection", proj});
 
 export const setCenter = loc => ({type: "setCenter", loc});
+
+export const setDocTitle = title => ({type: "setDocTitle", title});

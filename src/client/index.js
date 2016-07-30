@@ -13,6 +13,7 @@ import reducer from "../shared/reducer";
 import {CENTER, DEFAULT_ZOOM} from "../shared/consts";
 import {initMap, initLocs, setProjection, recomputeLocs} from "../shared/actions";
 import {loadGoogleMaps} from "../shared/google-maps";
+import {subscribeState} from "../shared/util";
 
 let hist = createHistory();
 let store = createStore(hist)(reducer);
@@ -39,6 +40,10 @@ Promise.all([
         });
 
         overlay.setMap(map);
+
+        subscribeState(store, ({docTitle}) => docTitle, docTitle => {
+            document.title = docTitle;
+        });
 
         return store.dispatch(initMap(google, map, new google.maps.Marker({
             map,

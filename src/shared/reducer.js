@@ -14,6 +14,7 @@ const INIT_STATE = {
     editFilters: {},
     curTab: "info",
     proj: null,
+    docTitle: "",
 };
 
 export default function(state = INIT_STATE, action) {
@@ -73,6 +74,9 @@ export default function(state = INIT_STATE, action) {
     break;
     case "resetPreviewLoc":
         s.previewLoc = null;
+    break;
+    case "setDocTitle":
+        s.docTitle = action.title;
     break;
     default:
         return state;
