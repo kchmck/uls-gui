@@ -11,9 +11,16 @@ import createRoutes from "../shared/routes";
 import createStore from "../shared/store";
 import reducer from "../shared/reducer";
 import {CENTER, DEFAULT_ZOOM} from "../shared/consts";
-import {initMap, initLocs, setProjection, recomputeLocs} from "../shared/actions";
 import {loadGoogleMaps} from "../shared/google-maps";
 import {subscribeState} from "../shared/util";
+
+import {
+    initMap,
+    initLocs,
+    setProjection,
+    recomputeLocs,
+    setState,
+} from "../shared/actions";
 
 let hist = createHistory();
 let store = createStore(hist)(reducer);
@@ -68,6 +75,12 @@ Promise.all([
             jitterLng: (Math.random() - 0.5) * 10.0e-3,
         }))
     ))),
+    store.dispatch(setState(JSON.parse(localStorage.getItem("state")))).then(() => {
+        subscribeState(store,
+            ({ignored, confirmed, notes}) => ({ignored, confirmed, notes}),
+            state => localStorage.setItem("state", JSON.stringify(state))
+        );
+    }),
 ]).then(() => {
     return store.dispatch(recomputeLocs());
 }).then(() => {

@@ -6,6 +6,8 @@ import {
     selectLoc,
     setTab,
     setDocTitle,
+    resetPreviewLoc,
+    discardNotes,
 } from "./actions";
 
 export default ({dispatch, getState}) => {
@@ -18,8 +20,8 @@ export default ({dispatch, getState}) => {
 
     return createRouter()
         .addCommon("/*", (_, loc) => {
-            let {freqLower, freqUpper, rxPowerLower} = qs.parse(loc.search);
-            return dispatch(setFilters({freqLower, freqUpper, rxPowerLower}));
+            let {freqLower, freqUpper, rxPowerLower, vis} = qs.parse(loc.search);
+            return dispatch(setFilters({freqLower, freqUpper, rxPowerLower, vis}));
         })
         .addRoute("/", withTitle("Home", () => Promise.resolve()))
         .addRoute("/filters", withTitle("Filters", () => dispatch(setTab("filters"))))
@@ -35,7 +37,11 @@ export default ({dispatch, getState}) => {
                     return Promise.reject("malformed location key");
                 }
 
-                return dispatch(selectLoc(lkey));
+                return Promise.all([
+                    dispatch(selectLoc(lkey)),
+                    dispatch(resetPreviewLoc()),
+                    dispatch(discardNotes()),
+                ]);
             }
         ));
 };

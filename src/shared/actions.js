@@ -3,6 +3,7 @@ import shallowEquals from "shallow-equals";
 import {historyPush} from "@kchmck/redux-history-utils";
 
 import {CENTER, CUTOFF_DIST} from "./consts";
+import {createVisCalc} from "./visibility";
 
 import {
     calcDist,
@@ -19,10 +20,8 @@ export const initMap = (google, map, centerMarker) => ({
 
 export const initLocs = locs => ({type: "initLocs", locs});
 
-export const setFilters = ({freqLower, freqUpper, rxPowerLower}) => {
-    return withRecomputeLocs({
-        type: "setFilters", freqLower, freqUpper, rxPowerLower
-    });
+export const setFilters = ({...filts}) => {
+    return withRecomputeLocs({type: "setFilters", ...filts});
 };
 
 const withRecomputeLocs = action => (dispatch, getState) => {
@@ -37,12 +36,17 @@ const withRecomputeLocs = action => (dispatch, getState) => {
     });
 };
 
-export const recomputeLocs = () => (dispatch, getState) => dispatch({
-    type: "setLocs",
-    locs: computeLocs(getState()),
-});
+export const recomputeLocs = () => (dispatch, getState) => {
+    let state = getState();
+    let calcVis = createVisCalc(state);
 
-function computeLocs({allLocs, filters}) {
+    return dispatch({
+        type: "setLocs",
+        locs: computeLocs(state, calcVis),
+    });
+};
+
+function computeLocs({allLocs, filters}, calcVis) {
     let {freqLower, freqUpper, rxPowerLower} = filters;
 
     return allLocs
@@ -61,6 +65,10 @@ function computeLocs({allLocs, filters}) {
                 .sort((a, b) => b.rxPower - a.rxPower),
         }))
         .filter(loc => loc.freqs.length > 0)
+        .map(loc => Object.assign(loc, {
+            vis: calcVis(loc.lkey),
+        }))
+        .filter(loc => (loc.vis & filters.vis) !== 0)
         .sort((a, b) => b.freqs[0].rxPower - a.freqs[0].rxPower);
 }
 
@@ -93,4 +101,27 @@ export const setProjection = proj => ({type: "setProjection", proj});
 
 export const setCenter = loc => ({type: "setCenter", loc});
 
+export const setCurCenter = () => (dispatch, getState) =>
+    dispatch(setCenter(getState().curLoc));
+
 export const setDocTitle = title => ({type: "setDocTitle", title});
+
+export const toggleIgnore = lkey => dispatch =>
+    dispatch({type: "toggleIgnore", lkey})
+        .then(() => dispatch(recomputeLocs()));
+
+export const toggleConfirm = lkey => dispatch =>
+    dispatch({type: "toggleConfirm", lkey})
+        .then(() => dispatch(recomputeLocs()));
+
+export const startEditNotes = lkey => ({type: "startEditNotes", lkey});
+
+export const changeNotes = notes => ({type: "changeNotes", notes});
+
+export const discardNotes = () => ({type: "discardNotes"});
+
+export const commitNotes = lkey => ({type: "commitNotes", lkey});
+
+export const toggleFilterVis = visFlag => ({type: "toggleFilterVis", visFlag});
+
+export const setState = state => ({type: "setState", state});

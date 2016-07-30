@@ -1,11 +1,13 @@
 import LazyInput from "lazy-input";
 import React from "react";
 import classNames from "classnames";
+import marked from "marked";
 import {Link} from "@kchmck/redux-history-utils";
 import {Provider, connect} from "react-redux";
 
 import * as actions from "../actions";
 import {locUrl, freqUrl} from "../urls";
+import {VIS} from "../visibility";
 
 import {
     calcSReading,
@@ -20,10 +22,100 @@ const onEvent = fn => e => {
     return fn(e);
 };
 
+const Icon = ({name}) => <span className={`fa fa-${name}`} />;
+
+const ControlButton = ({active, disabled, ...props}) =>
+    <button className={classNames("btn btn-secondary", {active, disabled})} {...props} />;
+
+const LocControls = connect(
+    ({ignored, confirmed}) => ({ignored, confirmed}),
+    actions
+)(
+    ({ignored, confirmed, lkey, setCurCenter, toggleIgnore, toggleConfirm}) => (
+        <div id="controls">
+            <div className="btn-group btn-group-sm">
+                <ControlButton onClick={() => setCurCenter()}>
+                    <Icon name="crosshairs" /> Center
+                </ControlButton>
+                <ControlButton
+                    active={!!ignored[lkey]}
+                    disabled={!!confirmed[lkey]}
+                    onClick={() => toggleIgnore(lkey)}
+                >
+                    <Icon name="ban" /> Ignore
+                </ControlButton>
+                <ControlButton
+                    active={!!confirmed[lkey]}
+                    disabled={!!ignored[lkey]}
+                    onClick={() => toggleConfirm(lkey)}
+                >
+                    <Icon name="check" /> Confirm
+                </ControlButton>
+            </div>
+        </div>
+    )
+);
+
+const NotesText = ({notes}) =>
+    <div dangerouslySetInnerHTML={{__html: marked(notes)}} />;
+
+const NoNotes = () => <p><em>No notes recorded</em></p>;
+
+const MaybeShowNotes = ({notes}) => <div id="noteText">
+    {notes ? <NotesText notes={notes} /> : <NoNotes />}
+</div>;
+
+const EditNotes = connect(({editNotes}) => ({editNotes}), actions)(
+    ({editNotes, changeNotes, commitNotes, discardNotes, lkey}) => <div>
+        <fieldset className="form-group">
+            <label htmlFor="editNotes" className="sr-only">
+                Enter location notes
+            </label>
+            <LazyInput type="textarea" className="form-control" id="editNotes"
+                rows="3" value={editNotes} autoFocus
+                onChange={e => changeNotes(e.target.value)} />
+        </fieldset>
+        <fieldset className="btn-group btn-group-sm">
+            <button className="btn btn-primary"
+                onClick={() => commitNotes(lkey)}
+            >
+                 <Icon name="floppy-o" /> Save
+            </button>
+            <button className="btn btn-secondary"
+                onClick={() => discardNotes()}
+            >
+                 Cancel
+            </button>
+        </fieldset>
+    </div>
+ );
+
+const ShowNotes = connect(({notes}) => ({notes}), actions)(
+    ({notes, startEditNotes, lkey}) => <div>
+        <MaybeShowNotes notes={notes[lkey]} />
+        <fieldset className="form-group">
+            <button className="btn btn-secondary btn-sm"
+                onClick={() => startEditNotes(lkey)}
+            >
+                <span className="fa fa-pencil" /> Edit
+            </button>
+        </fieldset>
+    </div>
+);
+
+const Notes = connect(({editingNotes}) => ({editingNotes}), actions)(
+    ({editingNotes, lkey}) => <div id="notes">
+        {editingNotes ? <EditNotes lkey={lkey} /> : <ShowNotes lkey={lkey} />}
+    </div>
+);
+
 const Heading = connect(({curLoc}) => curLoc)(
     ({rkey, lkey, callsign, desc}) => <div>
         <h1><a href={locUrl(rkey, lkey)}>{callsign}</a></h1>
-        <p className="desc">{desc}</p>
+        <p className="desc" title={desc}>{desc}</p>
+        <LocControls lkey={lkey} />
+        <h2>Notes</h2>
+        <Notes lkey={lkey} />
     </div>
 );
 
@@ -37,11 +129,15 @@ const Freq = ({rkey, fkey, freq, power, rxPower, emissions}) => (
     <div className="freq">
         <div className="row">
             <h2 className="col-xs-10">
-                <a href={freqUrl(rkey, fkey)}>{dispFreq(freq)}MHz</a>
+                <a href={freqUrl(rkey, fkey)}
+                    title={`${freq}Hz`}
+                >
+                    {dispFreq(freq)}MHz
+                </a>
             </h2>
-            <p className="col-xs-2" title={`${power / 1.0e3}W`}>
+            <div className="sReading col-xs-2" title={`${power / 1.0e3}W`}>
                 {calcSReading(rxPower)}
-            </p>
+            </div>
         </div>
         <ul>
         {emissions.map((e, key) =>
@@ -65,7 +161,7 @@ const Info = () => <div>
     <Freqs />
 </div>;
 
-const NoInfo = () => <p>No location selected</p>;
+const NoInfo = () => <p><em>No location selected</em></p>;
 
 const MaybeInfo = connect(({curLoc}) => ({curLoc}))(
     ({curLoc}) => <div id="info" className="pane">
@@ -92,6 +188,23 @@ const FilterInput = connect(({editFilters}, {id}) => ({
     )
 );
 
+const FilterVisibility = connect(
+    ({editFilters}) => ({vis: editFilters.vis}),
+    actions
+)(
+    ({vis, toggleFilterVis, visFlag, title, children}) => (
+        <button
+            className={classNames("btn btn-secondary", {
+                active: (vis & visFlag) !== 0,
+            })}
+            onClick={onEvent(() => toggleFilterVis(visFlag))}
+            title={title}
+        >
+            {children}
+        </button>
+    )
+);
+
 const Filters = connect(null, actions)(
     ({commitFilters}) => (
         <form onSubmit={onEvent(commitFilters)}>
@@ -114,6 +227,23 @@ const Filters = connect(null, actions)(
                 <div className="input-group">
                     <FilterInput id="rxPowerLower" />
                     <div className="input-group-addon">dBm</div>
+                </div>
+            </fieldset>
+            <fieldset className="form-group" id="visibility">
+                <label htmlFor="visibility">Visibility</label>
+                <div className="btn-group btn-block">
+                    <FilterVisibility visFlag={VIS.UNCONFIRMED} title="Unconfirmed">
+                        <Icon name="question" />
+                    </FilterVisibility>
+                    <FilterVisibility visFlag={VIS.IGNORED} title="Ignored">
+                        <Icon name="ban" />
+                    </FilterVisibility>
+                    <FilterVisibility visFlag={VIS.CONFIRMED} title="Confirmed">
+                        <Icon name="check" />
+                    </FilterVisibility>
+                    <FilterVisibility visFlag={VIS.MODIFIED} title="Modified">
+                        <Icon name="pencil" />
+                    </FilterVisibility>
                 </div>
             </fieldset>
             <button type="submit" className="btn btn-primary">Filter</button>

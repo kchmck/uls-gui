@@ -39,6 +39,7 @@
         "no-shadow": "error",
         "init-declarations": "error",
         "react/prop-types": "off",
-        "react/jsx-key": "error"
+        "react/jsx-key": "error",
+        "react/no-danger": "off"
     }
 }

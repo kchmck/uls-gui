@@ -29,6 +29,7 @@
     "koa-route": "^2.4.2",
     "koa-static": "^2.0.0",
     "lazy-input": "^2.0.0",
+    "marked": "^0.3.5",
     "mocha": "^2.5.3",
     "node-sass": "^3.8.0",
     "nodemon": "^1.9.2",
