@@ -119,7 +119,7 @@ export default function(state = INIT_STATE, action) {
         });
         s.editingNotes = false;
     break;
-    case "setState":
+    case "loadState":
         if (action.state) {
             Object.assign(s, action.state);
         }

@@ -19,7 +19,7 @@ import {
     initLocs,
     setProjection,
     recomputeLocs,
-    setState,
+    loadState,
 } from "../shared/actions";
 
 let hist = createHistory();
@@ -75,7 +75,7 @@ Promise.all([
             jitterLng: (Math.random() - 0.5) * 10.0e-3,
         }))
     ))),
-    store.dispatch(setState(JSON.parse(localStorage.getItem("state")))).then(() => {
+    store.dispatch(loadState(JSON.parse(localStorage.getItem("state")))).then(() => {
         subscribeState(store,
             ({ignored, confirmed, notes}) => ({ignored, confirmed, notes}),
             state => localStorage.setItem("state", JSON.stringify(state))

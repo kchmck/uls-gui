@@ -124,4 +124,4 @@ export const commitNotes = lkey => ({type: "commitNotes", lkey});
 
 export const toggleFilterVis = visFlag => ({type: "toggleFilterVis", visFlag});
 
-export const setState = state => ({type: "setState", state});
+export const loadState = state => ({type: "loadState", state});
