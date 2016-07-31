@@ -241,7 +241,7 @@ const Filters = connect(null, actions)(
                     <FilterVisibility visFlag={VIS.CONFIRMED} title="Confirmed">
                         <Icon name="check" />
                     </FilterVisibility>
-                    <FilterVisibility visFlag={VIS.MODIFIED} title="Modified">
+                    <FilterVisibility visFlag={VIS.ANNOTATED} title="Annotated">
                         <Icon name="pencil" />
                     </FilterVisibility>
                 </div>

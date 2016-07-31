@@ -3,7 +3,7 @@ export const VIS = {
     UNCONFIRMED: 0b1000,
     IGNORED: 0b100,
     CONFIRMED: 0b10,
-    MODIFIED: 0b1,
+    ANNOTATED: 0b1,
 };
 
 export function createVisCalc({ignored, confirmed, notes}) {
@@ -19,7 +19,7 @@ export function createVisCalc({ignored, confirmed, notes}) {
         }
 
         if (notes[lkey]) {
-            vis |= VIS.MODIFIED;
+            vis |= VIS.ANNOTATED;
         }
 
         if (vis === 0) {
