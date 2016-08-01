@@ -1,22 +1,15 @@
 export const VIS = {
-    DEFAULT: 0b1011,
-    UNCONFIRMED: 0b1000,
-    IGNORED: 0b100,
-    CONFIRMED: 0b10,
-    ANNOTATED: 0b1,
+    DEFAULT: 0b10111,
+    REVIEWING: 0b10000,
+    IGNORED: 0b1000,
+    CONFIRMED: 0b100,
+    ANNOTATED: 0b10,
+    UNCONFIRMED: 0b1,
 };
 
-export function createVisCalc({ignored, confirmed, notes}) {
+export function createVisCalc({locCat, notes}) {
     return lkey => {
-        let vis = 0;
-
-        if (ignored[lkey]) {
-            vis |= VIS.IGNORED;
-        }
-
-        if (confirmed[lkey]) {
-            vis |= VIS.CONFIRMED;
-        }
+        let vis = locCat[lkey] || 0;
 
         if (notes[lkey]) {
             vis |= VIS.ANNOTATED;

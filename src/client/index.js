@@ -77,7 +77,7 @@ Promise.all([
     ))),
     store.dispatch(loadState(JSON.parse(localStorage.getItem("state")))).then(() => {
         subscribeState(store,
-            ({ignored, confirmed, notes}) => ({ignored, confirmed, notes}),
+            ({locCat, notes}) => ({locCat, notes}),
             state => localStorage.setItem("state", JSON.stringify(state))
         );
     }),

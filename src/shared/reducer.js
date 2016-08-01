@@ -18,8 +18,7 @@ const INIT_STATE = {
     curTab: "info",
     proj: null,
     docTitle: "",
-    ignored: {},
-    confirmed: {},
+    locCat: {},
     notes: {},
     editNotes: "",
     editingNotes: false,
@@ -93,14 +92,9 @@ export default function(state = INIT_STATE, action) {
     case "setDocTitle":
         s.docTitle = action.title;
     break;
-    case "toggleIgnore":
-        s.ignored = Object.assign({}, s.ignored, {
-            [action.lkey]: !s.ignored[action.lkey],
-        });
-    break;
-    case "toggleConfirm":
-        s.confirmed = Object.assign({}, s.confirmed, {
-            [action.lkey]: !s.confirmed[action.lkey],
+    case "toggleCat":
+        s.locCat = Object.assign({}, s.locCat, {
+            [action.lkey]: (s.locCat[action.lkey] & action.cat) ^ action.cat,
         });
     break;
     case "startEditNotes":

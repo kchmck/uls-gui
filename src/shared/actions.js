@@ -106,12 +106,8 @@ export const setCurCenter = () => (dispatch, getState) =>
 
 export const setDocTitle = title => ({type: "setDocTitle", title});
 
-export const toggleIgnore = lkey => dispatch =>
-    dispatch({type: "toggleIgnore", lkey})
-        .then(() => dispatch(recomputeLocs()));
-
-export const toggleConfirm = lkey => dispatch =>
-    dispatch({type: "toggleConfirm", lkey})
+export const toggleCat = (lkey, cat) => dispatch =>
+    dispatch({type: "toggleCat", lkey, cat})
         .then(() => dispatch(recomputeLocs()));
 
 export const startEditNotes = lkey => ({type: "startEditNotes", lkey});

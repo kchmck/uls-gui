@@ -24,33 +24,41 @@ const onEvent = fn => e => {
 
 const Icon = ({name}) => <span className={`fa fa-${name}`} />;
 
-const ControlButton = ({active, disabled, ...props}) =>
-    <button className={classNames("btn btn-secondary", {active, disabled})} {...props} />;
+const ControlButton = ({active, ...props}) =>
+    <button className={classNames("btn btn-secondary", {active})} {...props} />;
 
-const LocControls = connect(
-    ({ignored, confirmed}) => ({ignored, confirmed}),
+const CatButton = connect(
+    ({locCat}, {lkey}) => ({
+        curCat: locCat[lkey]
+    }),
     actions
 )(
-    ({ignored, confirmed, lkey, setCurCenter, toggleIgnore, toggleConfirm}) => (
+    ({curCat, toggleCat, cat, lkey, title, children}) =>
+        <ControlButton
+            active={curCat === cat}
+            onClick={() => toggleCat(lkey, cat)}
+            title={title}
+        >
+            {children}
+        </ControlButton>
+);
+
+const LocControls = connect(null, actions)(
+    ({lkey, setCurCenter}) => (
         <div id="controls">
             <div className="btn-group btn-group-sm">
-                <ControlButton onClick={() => setCurCenter()}>
-                    <Icon name="crosshairs" /> Center
+                <ControlButton onClick={() => setCurCenter()} title="Center">
+                    <Icon name="crosshairs" />
                 </ControlButton>
-                <ControlButton
-                    active={!!ignored[lkey]}
-                    disabled={!!confirmed[lkey]}
-                    onClick={() => toggleIgnore(lkey)}
-                >
-                    <Icon name="ban" /> Ignore
-                </ControlButton>
-                <ControlButton
-                    active={!!confirmed[lkey]}
-                    disabled={!!ignored[lkey]}
-                    onClick={() => toggleConfirm(lkey)}
-                >
-                    <Icon name="check" /> Confirm
-                </ControlButton>
+                <CatButton lkey={lkey} cat={VIS.IGNORED} title="Ignore">
+                    <Icon name="ban" />
+                </CatButton>
+                <CatButton lkey={lkey} cat={VIS.REVIEWING} title="Review">
+                    <Icon name="eye" />
+                </CatButton>
+                <CatButton lkey={lkey} cat={VIS.CONFIRMED} title="Confirm">
+                    <Icon name="check" />
+                </CatButton>
             </div>
         </div>
     )
@@ -237,6 +245,9 @@ const Filters = connect(null, actions)(
                     </FilterVisibility>
                     <FilterVisibility visFlag={VIS.IGNORED} title="Ignored">
                         <Icon name="ban" />
+                    </FilterVisibility>
+                    <FilterVisibility visFlag={VIS.REVIEWING} title="Reviewing">
+                        <Icon name="eye" />
                     </FilterVisibility>
                     <FilterVisibility visFlag={VIS.CONFIRMED} title="Confirmed">
                         <Icon name="check" />
