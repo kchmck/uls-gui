@@ -24,103 +24,125 @@ const INIT_STATE = {
     editingNotes: false,
 };
 
-export default function(state = INIT_STATE, action) {
-    let s = Object.assign({}, state);
 
-    /* eslint indent: "off" */
-    switch (action.type) {
-    case "initMap":
-        Object.assign(s, {
-            google: action.google,
-            map: action.map,
-            centerMarker: action.centerMarker,
-        });
-    break;
-    case "initLocs":
-        s.allLocs = action.locs;
-    break;
-    case "setLocs":
-        s.locs = action.locs;
-    break;
-    case "selectLoc":
-        s.curLoc = s.locs[action.idx];
-    break;
-    case "setTab":
-        s.curTab = action.tab;
-    break;
-    case "setFilters": {
-        let freqLower = parseFloat(action.freqLower);
-        let freqUpper = parseFloat(action.freqUpper);
-        let rxPowerLower = parseFloat(action.rxPowerLower);
-        let vis = parseInt(action.vis, 10);
+const HANDLERS = {
+    initMap({google, map, centerMarker}) {
+        return Object.assign(this, {google, map, centerMarker});
+    },
 
-        s.filters = {
-            freqLower: isNaN(freqLower) ? s.filters.freqLower : freqLower,
-            freqUpper: isNaN(freqUpper) ? s.filters.freqUpper : freqUpper,
-            rxPowerLower: isNaN(rxPowerLower) ? s.filters.rxPowerLower : rxPowerLower,
-            vis: isNaN(vis) ? s.filters.vis : vis,
+    initLocs({locs}) {
+        return Object.assign(this, {allLocs: locs});
+    },
+
+    setLocs({locs}) {
+        return Object.assign(this, {locs});
+    },
+
+    selectLoc({idx}) {
+        return Object.assign(this, {curLoc: this.locs[idx]});
+    },
+
+    setTab({tab}) {
+        return Object.assign(this, {curTab: tab});
+    },
+
+    setFilters(args) {
+        let freqLower = parseFloat(args.freqLower);
+        let freqUpper = parseFloat(args.freqUpper);
+        let rxPowerLower = parseFloat(args.rxPowerLower);
+        let vis = parseInt(args.vis, 10);
+
+        let filters = {
+            freqLower: isNaN(freqLower) ? this.filters.freqLower : freqLower,
+            freqUpper: isNaN(freqUpper) ? this.filters.freqUpper : freqUpper,
+            rxPowerLower: isNaN(rxPowerLower) ? this.filters.rxPowerLower : rxPowerLower,
+            vis: isNaN(vis) ? this.filters.vis : vis,
         };
 
-        s.editFilters = Object.assign({}, s.filters);
-    } break;
-    case "changeFilter":
-        if (isNaN(action.value)) {
-            break;
+        return Object.assign(this, {
+            filters,
+            editFilters: Object.assign({}, filters),
+        });
+    },
+
+    changeFilter({filter, value}) {
+        if (isNaN(value)) {
+            return this;
         }
 
-        s.editFilters = Object.assign({}, s.editFilters, {
-            [action.filter]: action.value,
+        return Object.assign(this, {
+            editFilters: Object.assign({}, this.editFilters, {
+                [filter]: value,
+            }),
         });
-    break;
-    case "toggleFilterVis":
-        s.editFilters = Object.assign({}, s.editFilters, {
-            vis: s.editFilters.vis ^ action.visFlag,
-        });
-    break;
-    case "setProjection":
-        s.proj = Object.create(action.proj);
-    break;
-    case "setCenter":
-        s.map.setCenter(action.loc);
-    break;
-    case "setPreviewLoc":
-        s.previewLoc = action.loc;
-    break;
-    case "resetPreviewLoc":
-        s.previewLoc = null;
-    break;
-    case "setDocTitle":
-        s.docTitle = action.title;
-    break;
-    case "toggleCat":
-        s.locCat = Object.assign({}, s.locCat, {
-            [action.lkey]: (s.locCat[action.lkey] & action.cat) ^ action.cat,
-        });
-    break;
-    case "startEditNotes":
-        s.editNotes = s.notes[action.lkey];
-        s.editingNotes = true;
-    break;
-    case "changeNotes":
-        s.editNotes = action.notes;
-    break;
-    case "discardNotes":
-        s.editingNotes = false;
-    break;
-    case "commitNotes":
-        s.notes = Object.assign({}, s.notes, {
-            [action.lkey]: s.editNotes,
-        });
-        s.editingNotes = false;
-    break;
-    case "loadState":
-        if (action.state) {
-            Object.assign(s, action.state);
-        }
-    break;
-    default:
-        return state;
-    }
+    },
 
-    return s;
+    toggleFilterVis({visFlag}) {
+        return Object.assign(this, {
+            editFilters: Object.assign({}, this.editFilters, {
+                vis: this.editFilters.vis ^ visFlag,
+            }),
+        });
+    },
+
+    setProjection({proj}) {
+        return Object.assign(this, {proj: Object.create(proj)});
+    },
+
+    setCenter({loc}) {
+        this.map.setCenter(loc);
+        return this;
+    },
+
+    setPreviewLoc({loc}) {
+        return Object.assign(this, {previewLoc: loc});
+    },
+
+    setDocTitle({title}) {
+        return Object.assign(this, {docTitle: title});
+    },
+
+    toggleCat({lkey, cat}) {
+        return Object.assign(this, {
+            locCat: Object.assign({}, this.locCat, {
+                [lkey]: (this.locCat[lkey] & cat) ^ cat,
+            }),
+        });
+    },
+
+    startEditNotes({lkey}) {
+        return Object.assign(this, {
+            editingNotes: true,
+            editNotes: this.notes[lkey],
+        });
+    },
+
+    changeNotes({notes}) {
+        return Object.assign(this, {editNotes: notes});
+    },
+
+    discardNotes() {
+        return Object.assign(this, {editingNotes: false});
+    },
+
+    commitNotes({lkey}) {
+        return Object.assign(this, {
+            notes: Object.assign({}, this.notes, {
+                [lkey]: this.editNotes,
+            }),
+            editingNotes: false,
+        });
+    },
+
+    loadState({state}) {
+        return state ? Object.assign(this, state) : this;
+    },
+};
+
+export default function(state = INIT_STATE, action) {
+    let {type, ...args} = action;
+    let handler = HANDLERS[type];
+
+    return handler ? handler.call(Object.assign({}, state), args)
+                   : state;
 }

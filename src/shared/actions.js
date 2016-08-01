@@ -84,7 +84,7 @@ export const selectLoc = lkey => (dispatch, getState) => {
 
 export const setPreviewLoc = loc => ({type: "setPreviewLoc", loc});
 
-export const resetPreviewLoc = () => ({type: "resetPreviewLoc"});
+export const resetPreviewLoc = () => setPreviewLoc(null);
 
 export const setTab = tab => ({type: "setTab", tab});
 
