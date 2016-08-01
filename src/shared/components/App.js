@@ -286,6 +286,7 @@ const List = ({locs, locHover, locLeave}) => (
             >
                 <h1><Link to={`/info/${loc.lkey}`}>{loc.callsign}</Link></h1>
                 <p className="desc">{loc.desc}</p>
+                <p>{loc.freqs.map(f => dispFreq(f.freq)).join(", ")}</p>
             </li>
         )}
     </ul>
