@@ -24,7 +24,6 @@ const INIT_STATE = {
     editingNotes: false,
 };
 
-
 const HANDLERS = {
     initMap({google, map, centerMarker}) {
         return Object.assign(this, {google, map, centerMarker});
