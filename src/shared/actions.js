@@ -12,7 +12,7 @@ import {
     milliWattToDbm,
 } from "./util";
 
-let calcPathLoss = createPathLossCalc(3.0);
+let calcPathLoss = createPathLossCalc(2.5);
 
 export const initMap = (google, map, centerMarker) => ({
     type: "initMap", map, google, centerMarker,

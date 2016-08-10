@@ -25,8 +25,9 @@ app.use(route.get("/api/records", function*() {
                locations.lkey, latitude, longitude,
                frequencies.fkey, frequency, power,
                emission
-        from records, frequencies, locations, emissions
-        where locations.rkey = records.rkey and
+        from records, recordDetails, frequencies, locations, emissions
+        where recordDetails.rkey = records.rkey and
+              locations.rkey = records.rkey and
               frequencies.rkey = records.rkey and
               frequencies.lkey = locations.lkey and
               emissions.rkey = records.rkey and
