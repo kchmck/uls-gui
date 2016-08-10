@@ -15,7 +15,7 @@ html, body, #map-container, #map, #sidebar {
 
 #sidebar {
     font-family: helvetica;
-    overflow: scroll;
+    overflow-y: scroll;
     padding: 25px 30px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     background: #fefefe;
