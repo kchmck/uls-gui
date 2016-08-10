@@ -8,7 +8,7 @@ import {hsvToRgb} from "../util";
 
 const Marker = ({loc, pos, active=false, preview=false}) => (
     <Link to={`/info/${loc.lkey}`}
-        className={classNames("marker", {active, preview})}
+        className={classNames("marker fade-in", {active, preview})}
         style={{
             background: calcBackground(loc.freqs[0].rxPower),
             left: pos.x,
