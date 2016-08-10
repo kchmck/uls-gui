@@ -17,13 +17,13 @@ const Marker = ({loc, pos, active=false, preview=false}) => (
     />
 );
 
-const ActiveMarker = connect(({curLoc, proj}) => ({curLoc, proj}))(
+const ActiveMarker = connect(({curLoc}) => ({curLoc}))(
     ({curLoc, proj}) => curLoc ?
         <Marker loc={curLoc} pos={calcPos(curLoc, proj)} active={true} /> :
         <span />
 );
 
-const PreviewMarker = connect(({previewLoc, proj}) => ({previewLoc, proj}))(
+const PreviewMarker = connect(({previewLoc}) => ({previewLoc}))(
     ({previewLoc, proj}) => previewLoc ?
         <Marker loc={previewLoc} pos={calcPos(previewLoc, proj)} preview={true} /> :
         <span />
@@ -41,7 +41,7 @@ function calcSat(dbm) {
     return Math.min(Math.max((dbm + 127.0) / 54.0, 0.0), 1.0);
 }
 
-const Markers = connect(({locs, proj}) => ({locs, proj}))(
+const Markers = connect(({locs}) => ({locs}))(
     ({locs, proj}) => <div>
         {locs.map(loc =>
             <Marker key={loc.lkey} loc={loc} pos={calcPos(loc, proj)} />)}
@@ -55,11 +55,13 @@ function calcPos(loc, proj) {
     });
 }
 
-const AllMarkers = () => <div>
-    <Markers />
-    <ActiveMarker />
-    <PreviewMarker />
-</div>;
+const AllMarkers = connect(({proj}) => ({proj}))(
+    ({proj}) => proj ? <div>
+        <Markers proj={proj} />
+        <ActiveMarker proj={proj} />
+        <PreviewMarker proj={proj} />
+    </div> : <div />
+);
 
 const Overlay = props => <Provider {...props}>
     <AllMarkers />
