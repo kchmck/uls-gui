@@ -21,7 +21,7 @@ app.use(mount("/static", serve("static")));
 
 app.use(route.get("/api/records", function*() {
     const QUERY = `
-        select records.rkey, callsign, title,
+        select records.rkey, callsign, title, eligibility,
                locations.lkey, latitude, longitude,
                frequencies.fkey, frequency, power,
                emission
@@ -66,6 +66,7 @@ app.use(route.get("/api/records", function*() {
                     lkey: lkey,
                     callsign: row.callsign,
                     desc: row.title.slice(csIdx + dashIdx + 2),
+                    elig: (row.eligibility || "").toUpperCase(),
                     lat: row.latitude,
                     lng: row.longitude,
                     freqs: [],

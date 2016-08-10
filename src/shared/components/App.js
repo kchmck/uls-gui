@@ -118,9 +118,9 @@ const Notes = connect(({editingNotes}) => ({editingNotes}), actions)(
 );
 
 const Heading = connect(({curLoc}) => curLoc)(
-    ({rkey, lkey, callsign, desc}) => <div>
+    ({rkey, lkey, callsign, desc, elig}) => <div>
         <h1><a href={locUrl(rkey, lkey)}>{callsign}</a></h1>
-        <p className="desc" title={desc}>{desc}</p>
+        <p className="desc" title={`${desc} / ${elig}`}>{desc}</p>
         <LocControls lkey={lkey} />
         <h2>Notes</h2>
         <Notes lkey={lkey} />
