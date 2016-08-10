@@ -84,7 +84,8 @@ Promise.all([
 ]).then(() => {
     return store.dispatch(recomputeLocs());
 }).then(() => {
-    return router.handlePath(hist.getCurrentLocation());
+    return router.handlePath(hist.getCurrentLocation())
+        .catch(e => console.log(e));
 }).then(() => {
     hist.listen(router.handlePath);
     ReactDOM.render(<App store={store} />, document.getElementById("sidebar"));
