@@ -7,10 +7,16 @@ import route from "koa-route";
 import serve from "koa-static";
 import favicon from "koa-favicon";
 import sqlite3 from "sqlite3";
+import {ArgumentParser} from "argparse";
 
-let db = new sqlite3.Database("../scrape-fcc/scrape/records.db",
-                              sqlite3.OPEN_READONLY);
+let parser = new ArgumentParser();
+parser.addArgument(["-d", "--db"], {
+    required: true,
+    help: "path to scrape-fcc sqlite database",
+});
+let args = parser.parseArgs();
 
+let db = new sqlite3.Database(args.db, sqlite3.OPEN_READONLY);
 let app = koa();
 
 app.use(handlebars());
