@@ -1,11 +1,11 @@
 import "babel-polyfill";
 
-import koa from "koa";
+import favicon from "koa-favicon";
 import handlebars from "koa-handlebars";
+import koa from "koa";
 import mount from "koa-mount";
 import route from "koa-route";
 import serve from "koa-static";
-import favicon from "koa-favicon";
 import sqlite3 from "sqlite3";
 import {ArgumentParser} from "argparse";
 
