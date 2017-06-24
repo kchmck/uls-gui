@@ -29,6 +29,6 @@ lint:
 build-web: static/js/app.js static/css/app.css
 
 serve: lib/server/index.js
-	nodemon -w views -w static -e hbs,js $<
+	nodemon -w views -w static -e hbs,js $< -- $(SERVE_FLAGS)
 
 .PHONY: build test lint build-web serve
