@@ -20,8 +20,8 @@ static/js/app.js: $(LIB)
 
 build: $(LIB)
 
-test: build
-	mocha --compilers js:babel-register -u qunit lib/**/test/*
+test:
+	NODE_ENV=test mocha --recursive --require babel-register -u qunit src
 
 lint:
 	eslint src
