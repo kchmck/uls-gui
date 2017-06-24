@@ -9,12 +9,16 @@ import serve from "koa-static";
 import sqlite3 from "sqlite3";
 import {ArgumentParser} from "argparse";
 
-let parser = new ArgumentParser();
-parser.addArgument(["-d", "--db"], {
-    required: true,
-    help: "path to scrape-fcc sqlite database",
-});
-let args = parser.parseArgs();
+let args = (function() {
+    let parser = new ArgumentParser();
+
+    parser.addArgument(["-d", "--db"], {
+        required: true,
+        help: "path to scrape-fcc sqlite database",
+    });
+
+    return parser.parseArgs();
+})();
 
 let db = new sqlite3.Database(args.db, sqlite3.OPEN_READONLY);
 let app = koa();
