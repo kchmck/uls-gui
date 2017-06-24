@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "lib",
-  "author": "",
+  "author": "Mick Koch <mick@kochm.co>",
   "license": "MIT",
   "devDependencies": {
     "@kchmck/redux-history-utils": "^1.0.0",
