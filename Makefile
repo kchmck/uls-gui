@@ -9,7 +9,7 @@ endif
 
 lib/%.js: src/%.js
 	mkdir -p $(dir $@)
-	babel $< >$@
+	babel $< -o $@
 
 static/css/%.css: styles/%.scss
 	mkdir -p $(dir $@)
