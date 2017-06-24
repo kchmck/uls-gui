@@ -30,23 +30,33 @@ function initServer() {
 
     app.use(mount("/static", serve("static")));
 
-    app.use(route.get("/api/records", function*() {
-        const QUERY = `
-            select records.rkey, callsign, title, eligibility,
-                   locations.lkey, latitude, longitude,
-                   frequencies.fkey, frequency, power,
-                   emission
-            from records, recordDetails, frequencies, locations, emissions
-            where recordDetails.rkey = records.rkey and
-                  locations.rkey = records.rkey and
-                  frequencies.rkey = records.rkey and
-                  frequencies.lkey = locations.lkey and
-                  emissions.rkey = records.rkey and
-                  emissions.fkey = frequencies.fkey
-            order by records.rkey, locations.lkey, frequencies.fkey
-        `;
+    app.use(route.get("/api/records", createRecordFetcher(db)));
 
-        let names = yield new Promise((resolve, reject) => {
+    app.use(function*() {
+        yield this.render("index", {});
+    });
+
+    app.listen(3000);
+}
+
+function createRecordFetcher(db) {
+    const QUERY = `
+        select records.rkey, callsign, title, eligibility,
+               locations.lkey, latitude, longitude,
+               frequencies.fkey, frequency, power,
+               emission
+        from records, recordDetails, frequencies, locations, emissions
+        where recordDetails.rkey = records.rkey and
+              locations.rkey = records.rkey and
+              frequencies.rkey = records.rkey and
+              frequencies.lkey = locations.lkey and
+              emissions.rkey = records.rkey and
+              emissions.fkey = frequencies.fkey
+        order by records.rkey, locations.lkey, frequencies.fkey
+    `;
+
+    return function*() {
+        this.body = yield new Promise((resolve, reject) => {
             let locs = [];
 
             let prevLoc = null;
@@ -108,15 +118,7 @@ function initServer() {
                 }
             });
         });
-
-        this.body = names;
-    }));
-
-    app.use(function*() {
-        yield this.render("index", {});
-    });
-
-    app.listen(3000);
+    };
 }
 
 if (process.env.NODE_ENV !== "test") {
