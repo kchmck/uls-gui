@@ -2,10 +2,8 @@ var webpack = require("webpack");
 
 var plugins = [
     new webpack.DefinePlugin({
-        "process.env": JSON.stringify({
-            NODE_ENV: process.env.NODE_ENV,
-            MAPS_API_KEY: process.env.MAPS_API_KEY,
-        }),
+        "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
+        "process.env.MAPS_API_KEY": JSON.stringify(process.env.MAPS_API_KEY),
     }),
 ];
 
