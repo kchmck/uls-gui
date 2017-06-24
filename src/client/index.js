@@ -22,71 +22,77 @@ import {
     loadState,
 } from "../shared/actions";
 
-let hist = createHistory();
-let store = createStore(hist)(reducer);
-let router = createRoutes(store);
+function initClient() {
+    let hist = createHistory();
+    let store = createStore(hist)(reducer);
+    let router = createRoutes(store);
 
-Promise.all([
-    loadGoogleMaps({
-        key: process.env.MAPS_API_KEY,
-        version: "3.25",
-    }).then(google => {
-        let map = new google.maps.Map(document.getElementById("map"), {
-            center: CENTER,
-            zoom: DEFAULT_ZOOM,
-            styles: [
-                {
-                    featureType: "poi",
-                    elementType: "labels",
-                    stylers: [{visibility: "off"}]
+    Promise.all([
+        loadGoogleMaps({
+            key: process.env.MAPS_API_KEY,
+            version: "3.25",
+        }).then(google => {
+            let map = new google.maps.Map(document.getElementById("map"), {
+                center: CENTER,
+                zoom: DEFAULT_ZOOM,
+                styles: [
+                    {
+                        featureType: "poi",
+                        elementType: "labels",
+                        stylers: [{visibility: "off"}]
+                    },
+                    {
+                        featureType: "transit",
+                        elementType: "labels",
+                        stylers: [{visibility: "off"}]
+                    }
+                ]
+            });
+
+            let overlay = Object.assign(new google.maps.OverlayView(), {
+                onAdd() {
+                    ReactDOM.render(<Overlay store={store} />,
+                        this.getPanes().overlayMouseTarget);
                 },
-                {
-                    featureType: "transit",
-                    elementType: "labels",
-                    stylers: [{visibility: "off"}]
-                }
-            ]
-        });
+                draw() {
+                    store.dispatch(setProjection(this.getProjection()));
+                },
+            });
 
-        let overlay = Object.assign(new google.maps.OverlayView(), {
-            onAdd() {
-                ReactDOM.render(<Overlay store={store} />,
-                    this.getPanes().overlayMouseTarget);
-            },
-            draw() {
-                store.dispatch(setProjection(this.getProjection()));
-            },
-        });
+            overlay.setMap(map);
 
-        overlay.setMap(map);
+            subscribeState(store, ({docTitle}) => docTitle, docTitle => {
+                document.title = docTitle;
+            });
 
-        subscribeState(store, ({docTitle}) => docTitle, docTitle => {
-            document.title = docTitle;
-        });
+            return store.dispatch(initMap(google, map, new google.maps.Marker({
+                map,
+                position: CENTER,
+            })));
+        }),
+        axios.get("/api/records").then(({data}) => store.dispatch(initLocs(
+            data.map(loc => Object.assign(loc, {
+                jitterLat: (Math.random() - 0.5) * 10.0e-3,
+                jitterLng: (Math.random() - 0.5) * 10.0e-3,
+            }))
+        ))),
+        store.dispatch(loadState(JSON.parse(localStorage.getItem("state")))).then(() => {
+            subscribeState(store,
+                ({locCat, notes}) => ({locCat, notes}),
+                state => localStorage.setItem("state", JSON.stringify(state))
+            );
+        }),
+    ]).then(() => {
+        return store.dispatch(recomputeLocs());
+    }).then(() => {
+        return router.handlePath(hist.getCurrentLocation())
+            .catch(e => console.log(e));
+    }).then(() => {
+        hist.listen(router.handlePath);
+        ReactDOM.render(<App store={store} />, document.getElementById("sidebar"));
+    });
+}
 
-        return store.dispatch(initMap(google, map, new google.maps.Marker({
-            map,
-            position: CENTER,
-        })));
-    }),
-    axios.get("/api/records").then(({data}) => store.dispatch(initLocs(
-        data.map(loc => Object.assign(loc, {
-            jitterLat: (Math.random() - 0.5) * 10.0e-3,
-            jitterLng: (Math.random() - 0.5) * 10.0e-3,
-        }))
-    ))),
-    store.dispatch(loadState(JSON.parse(localStorage.getItem("state")))).then(() => {
-        subscribeState(store,
-            ({locCat, notes}) => ({locCat, notes}),
-            state => localStorage.setItem("state", JSON.stringify(state))
-        );
-    }),
-]).then(() => {
-    return store.dispatch(recomputeLocs());
-}).then(() => {
-    return router.handlePath(hist.getCurrentLocation())
-        .catch(e => console.log(e));
-}).then(() => {
-    hist.listen(router.handlePath);
-    ReactDOM.render(<App store={store} />, document.getElementById("sidebar"));
-});
+if (process.env.NODE_ENV !== "test") {
+    initClient();
+}
