@@ -30,7 +30,7 @@ function initClient() {
     Promise.all([
         loadGoogleMaps({
             key: process.env.MAPS_API_KEY,
-            version: "3.25",
+            version: "3.29",
         }).then(google => {
             let map = new google.maps.Map(document.getElementById("map"), {
                 center: CENTER,
