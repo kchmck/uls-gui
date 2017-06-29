@@ -10,13 +10,11 @@ export function loadGoogleMaps({key, version}) {
         throw new Error("global callback already defined");
     }
 
-    let deferred = new Promise(resolve => {
+    return new Promise(resolve => {
         window[CALLBACK_NAME] = () => resolve(window.google);
+
+        let script = document.createElement("script");
+        script.src = `${URL}?v=${version}&key=${key}&callback=${CALLBACK_NAME}`;
+        document.body.appendChild(script);
     });
-
-    let script = document.createElement("script");
-    script.src = `${URL}?v=${version}&key=${key}&callback=${CALLBACK_NAME}`;
-    document.body.appendChild(script);
-
-    return deferred;
 }
