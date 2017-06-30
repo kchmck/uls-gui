@@ -16,7 +16,6 @@ static/css/%.css: styles/%.scss
 	node-sass $(SASS_FLAGS) $< >$@
 
 static/js/app.js: $(LIB)
-	webpack --cache
 
 build: $(LIB)
 
