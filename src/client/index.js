@@ -5,8 +5,8 @@ import axios from "axios";
 import {autorun} from "mobx";
 import {createHistory} from "history";
 
-import App from "../shared/components/App";
-import Overlay from "../shared/components/Overlay";
+import App from "../shared/components/app";
+import Overlay from "../shared/components/overlay";
 import {CENTER, DEFAULT_ZOOM} from "../shared/consts";
 import {createRoutes} from "../shared/routes";
 import {createState} from "../shared/state";
