@@ -6,7 +6,7 @@
         "node": true,
         "mocha": true
     },
-    "extends": ["eslint:recommended", "plugin:react/recommended"],
+    "extends": ["eslint:recommended"],
     "parserOptions": {
         "ecmaFeatures": {
             "experimentalObjectRestSpread": true,
@@ -14,9 +14,6 @@
         },
         "sourceType": "module"
     },
-    "plugins": [
-        "react"
-    ],
     "rules": {
         "indent": "off",
         "linebreak-style": [ "error", "unix" ],
@@ -38,9 +35,6 @@
         "no-duplicate-imports": "error",
         "no-var": "error",
         "no-shadow": "error",
-        "init-declarations": "error",
-        "react/prop-types": "off",
-        "react/jsx-key": "error",
-        "react/no-danger": "off"
+        "init-declarations": "error"
     }
 }

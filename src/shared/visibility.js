@@ -7,7 +7,7 @@ export const VIS = {
     UNCONFIRMED: 0b1,
 };
 
-export function createVisCalc({locCat, notes}) {
+export function createVisCalc(locCat, notes) {
     return lkey => {
         let vis = locCat[lkey] || 0;
 

@@ -1,5 +1,3 @@
-import shallowEquals from "shallow-equals";
-
 export function parseBandwidth(s) {
     if (s.length !== 4) {
         return null;
@@ -154,20 +152,6 @@ export function createDebounce(delay) {
         clearTimeout(handle);
         handle = setTimeout(fn, delay);
     };
-}
-
-export function subscribeState(store, getSubstate, fn) {
-    let prevState = null;
-
-    store.subscribe(() => {
-        let nextState = getSubstate(store.getState());
-
-        if (!shallowEquals(prevState, nextState)) {
-            fn(nextState);
-        }
-
-        prevState = nextState;
-    });
 }
 
 if (process.env.NODE_ENV === "test") {

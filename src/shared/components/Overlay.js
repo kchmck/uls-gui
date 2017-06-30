@@ -1,33 +1,18 @@
-import React from "react";
 import classNames from "classnames";
-import {Link} from "@kchmck/redux-history-utils";
-import {Provider, connect} from "react-redux";
+import h from "inferno-hyperscript";
+import {observer} from "inferno-mobx";
 import {sprintf} from "sprintf-js";
 
+import {Link} from "./link";
+import {createContext} from "./context";
 import {hsvToRgb} from "../util";
 
-const Marker = ({loc, pos, active=false, preview=false}) => (
-    <Link to={`/info/${loc.lkey}`}
-        className={classNames("marker fade-in", {active, preview})}
-        style={{
-            background: calcBackground(loc.freqs[0].rxPower),
-            left: pos.x,
-            top: pos.y,
-        }}
-    />
-);
-
-const ActiveMarker = connect(({curLoc}) => ({curLoc}))(
-    ({curLoc, proj}) => curLoc ?
-        <Marker loc={curLoc} pos={calcPos(curLoc, proj)} active={true} /> :
-        <span />
-);
-
-const PreviewMarker = connect(({previewLoc}) => ({previewLoc}))(
-    ({previewLoc, proj}) => previewLoc ?
-        <Marker loc={previewLoc} pos={calcPos(previewLoc, proj)} preview={true} /> :
-        <span />
-);
+function calcPos(loc, proj) {
+    return proj.fromLatLngToDivPixel({
+        lat: () => loc.lat + loc.jitterLat,
+        lng: () => loc.lng + loc.jitterLng,
+    });
+}
 
 function calcBackground(power) {
     let strength = calcSat(power);
@@ -41,30 +26,53 @@ function calcSat(dbm) {
     return Math.min(Math.max((dbm + 127.0) / 54.0, 0.0), 1.0);
 }
 
-const Markers = connect(({locs}) => ({locs}))(
-    ({locs, proj}) => <div>
-        {locs.map(loc =>
-            <Marker key={loc.lkey} loc={loc} pos={calcPos(loc, proj)} />)}
-    </div>
+const Marker = ({loc, pos, active=false, preview=false}) => (
+    h(Link, {
+        href: `/info/${loc.lkey}`,
+        className: classNames("marker fade-in", {active, preview}),
+        style: {
+            background: calcBackground(loc.freqs[0].rxPower),
+            left: pos.x,
+            top: pos.y,
+        },
+    })
 );
 
-function calcPos(loc, proj) {
-    return proj.fromLatLngToDivPixel({
-        lat: () => loc.lat + loc.jitterLat,
-        lng: () => loc.lng + loc.jitterLng,
-    });
-}
+const ActiveMarker = observer(({proj}, {s}) => (
+    s.curLoc ?
+        h(Marker, {
+            loc: s.curLoc,
+            pos: calcPos(s.curLoc, proj),
+            active: true
+        }) :
+        h("span")
+));
 
-const AllMarkers = connect(({proj}) => ({proj}))(
-    ({proj}) => proj ? <div>
-        <Markers proj={proj} />
-        <ActiveMarker proj={proj} />
-        <PreviewMarker proj={proj} />
-    </div> : <div />
+const PreviewMarker = observer(({proj}, {s}) => (
+    s.previewLoc ?
+        h(Marker, {
+            loc: s.previewLoc,
+            pos: calcPos(s.previewLoc, proj),
+            preview: true,
+        }) :
+        h("span")
+));
+
+const Markers = observer(({proj}, {s}) => h("div", null,
+    s.locs.map(loc =>
+        h(Marker, {key: loc.lkey, loc, pos: calcPos(loc, proj)}))
+));
+
+const ProjMarkers = ({proj}) => h("div", null,
+    proj ? [
+        h(Markers, {proj}),
+        h(ActiveMarker, {proj}),
+        h(PreviewMarker, {proj}),
+    ] : null
 );
 
-const Overlay = props => <Provider {...props}>
-    <AllMarkers />
-</Provider>;
+const AllMarkers = observer((_, {s}) => h(ProjMarkers, {proj: s.projection}));
+
+const Overlay = (s, hist) => h(createContext({s, hist}), null, h(AllMarkers));
 
 export default Overlay;

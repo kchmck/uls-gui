@@ -1,13 +1,12 @@
-import LazyInput from "lazy-input";
-import React from "react";
 import classNames from "classnames";
+import h from "inferno-hyperscript";
 import marked from "marked";
-import {Link} from "@kchmck/redux-history-utils";
-import {Provider, connect} from "react-redux";
+import {observer} from "inferno-mobx";
 
-import * as actions from "../actions";
-import {locUrl, freqUrl} from "../urls";
+import {Link} from "./link";
 import {VIS} from "../visibility";
+import {createContext} from "./context";
+import {locUrl, freqUrl} from "../urls";
 
 import {
     calcSReading,
@@ -15,170 +14,15 @@ import {
     createDebounce,
 } from "../util";
 
-let previewDebounce = createDebounce(100);
+const previewDebounce = createDebounce(100);
 
 const onEvent = fn => e => {
     e.preventDefault();
     return fn(e);
 };
 
-const Icon = ({name}) => <span className={`fa fa-${name}`} />;
-
-const ControlButton = ({active, ...props}) =>
-    <button className={classNames("btn btn-secondary", {active})} {...props} />;
-
-const CatButton = connect(
-    ({locCat}, {lkey}) => ({
-        curCat: locCat[lkey]
-    }),
-    actions
-)(
-    ({curCat, toggleCat, cat, lkey, title, children}) =>
-        <ControlButton
-            active={curCat === cat}
-            onClick={() => toggleCat(lkey, cat)}
-            title={title}
-        >
-            {children}
-        </ControlButton>
-);
-
-const LocControls = connect(null, actions)(
-    ({lkey, setCurCenter}) => (
-        <div id="controls">
-            <div className="btn-group btn-group-sm">
-                <ControlButton onClick={() => setCurCenter()} title="Center">
-                    <Icon name="crosshairs" />
-                </ControlButton>
-                <CatButton lkey={lkey} cat={VIS.IGNORED} title="Ignore">
-                    <Icon name="ban" />
-                </CatButton>
-                <CatButton lkey={lkey} cat={VIS.REVIEWING} title="Review">
-                    <Icon name="eye" />
-                </CatButton>
-                <CatButton lkey={lkey} cat={VIS.CONFIRMED} title="Confirm">
-                    <Icon name="check" />
-                </CatButton>
-            </div>
-        </div>
-    )
-);
-
-const NotesText = ({notes}) =>
-    <div dangerouslySetInnerHTML={{__html: marked(notes)}} />;
-
-const NoNotes = () => <p><em>No notes recorded</em></p>;
-
-const MaybeShowNotes = ({notes}) => <div id="noteText">
-    {notes ? <NotesText notes={notes} /> : <NoNotes />}
-</div>;
-
-const EditNotes = connect(({editNotes}) => ({editNotes}), actions)(
-    ({editNotes, changeNotes, commitNotes, discardNotes, lkey}) => <div>
-        <fieldset className="form-group">
-            <label htmlFor="editNotes" className="sr-only">
-                Enter location notes
-            </label>
-            <LazyInput type="textarea" className="form-control" id="editNotes"
-                rows="3" value={editNotes} autoFocus
-                onChange={e => changeNotes(e.target.value)} />
-        </fieldset>
-        <fieldset className="btn-group btn-group-sm">
-            <button className="btn btn-primary"
-                onClick={() => commitNotes(lkey)}
-            >
-                 <Icon name="floppy-o" /> Save
-            </button>
-            <button className="btn btn-secondary"
-                onClick={() => discardNotes()}
-            >
-                 Cancel
-            </button>
-        </fieldset>
-    </div>
- );
-
-const ShowNotes = connect(({notes}) => ({notes}), actions)(
-    ({notes, startEditNotes, lkey}) => <div>
-        <MaybeShowNotes notes={notes[lkey]} />
-        <fieldset className="form-group">
-            <button className="btn btn-secondary btn-sm"
-                onClick={() => startEditNotes(lkey)}
-            >
-                <span className="fa fa-pencil" /> Edit
-            </button>
-        </fieldset>
-    </div>
-);
-
-const Notes = connect(({editingNotes}) => ({editingNotes}), actions)(
-    ({editingNotes, lkey}) => <div id="notes">
-        {editingNotes ? <EditNotes lkey={lkey} /> : <ShowNotes lkey={lkey} />}
-    </div>
-);
-
-const Heading = connect(({curLoc}) => curLoc)(
-    ({rkey, lkey, callsign, desc, elig}) => <div>
-        <h1><a href={locUrl(rkey, lkey)}>{callsign}</a></h1>
-        <p className="desc" title={`${desc} / ${elig}`}>{desc}</p>
-        <LocControls lkey={lkey} />
-        <h2>Notes</h2>
-        <Notes lkey={lkey} />
-    </div>
-);
-
-const Emission = ({raw, bandwidth, modulation, signal, info}) => (
-    <li title={raw}>
-        {bandwidth / 1.0e3}kHz, {modulation}, {signal}, {info}
-    </li>
-);
-
-const Freq = ({rkey, fkey, freq, power, rxPower, emissions}) => (
-    <div className="freq">
-        <div className="row">
-            <h2 className="col-xs-10">
-                <a href={freqUrl(rkey, fkey)}
-                    title={`${freq}Hz`}
-                >
-                    {dispFreq(freq)}MHz
-                </a>
-            </h2>
-            <div className="sReading col-xs-2" title={`${power / 1.0e3}W`}>
-                {calcSReading(rxPower)}
-            </div>
-        </div>
-        <ul>
-        {emissions.map((e, key) =>
-            <Emission key={key} raw={e} {...parseEmission(e)} />)}
-        </ul>
-    </div>
-);
-
-const Freqs = connect(({curLoc}) => ({
-    rkey: curLoc.rkey,
-    freqs: curLoc.freqs,
-}))(
-    ({rkey, freqs}) => <div>
-        {Object.values(freqs).map((freq, key) =>
-            <Freq key={key} rkey={rkey} {...freq} />)}
-    </div>
-);
-
-const Info = () => <div>
-    <Heading />
-    <Freqs />
-</div>;
-
-const NoInfo = () => <p><em>No location selected</em></p>;
-
-const MaybeInfo = connect(({curLoc}) => ({curLoc}))(
-    ({curLoc}) => <div id="info" className="pane">
-        {curLoc ? <Info /> : <NoInfo />}
-    </div>
-);
-
-const onFilterChange = (id, changeFilter, proc) =>
-    onEvent(e => changeFilter(id, proc(parseFloat(e.target.value))));
+const onFilterChange = (id, fn, proc) =>
+    onEvent(e => fn(id, proc(parseFloat(e.target.value))));
 
 const procFreq = freq => freq * 1.0e6;
 const dispFreq = freq => freq / 1.0e6;
@@ -186,151 +30,217 @@ const dispFreq = freq => freq / 1.0e6;
 const defaultDisp = x => x;
 const defaultProc = x => x;
 
-const FilterInput = connect(({editFilters}, {id}) => ({
-    val: editFilters[id],
-}), actions)(
-    ({val, id, changeFilter, disp=defaultDisp, proc=defaultProc}) => (
-        <LazyInput type="text" id={id} className="form-control"
-            value={disp(val)}
-            onChange={onFilterChange(id, changeFilter, proc)} />
-    )
+const Icon = ({name}) => h("span", {className: `fa fa-${name}`});
+
+const ControlButton = ({active, ...props}) => h("button", Object.assign(props, {
+    className: classNames("btn btn-secondary", {active})
+}));
+
+const CatButton = observer(({lkey, cat, title, children}, {s}) => h(ControlButton, {
+    title,
+    active: s.locCat.get(lkey) === cat,
+    onClick: () => s.toggleCat(lkey, cat),
+}, children));
+
+const LocControls = ({lkey}, {s}) => h("div#controls", null,
+    h("div.btn-group.btn-group-sm", null, [
+        h(ControlButton, {onClick: () => s.setCurCenter(), title: "Center"},
+            h(Icon, {name: "crosshairs"})),
+        h(CatButton, {lkey, cat: VIS.IGNORED, title: "Ignore"},
+            h(Icon, {name: "ban"})),
+        h(CatButton, {lkey, cat: VIS.REVIEWING, title: "Review"},
+            h(Icon, {name: "eye"})),
+        h(CatButton, {lkey, cat: VIS.CONFIRMED, title: "Confirm"},
+            h(Icon, {name: "check"})),
+    ])
 );
 
-const FilterVisibility = connect(
-    ({editFilters}) => ({vis: editFilters.vis}),
-    actions
-)(
-    ({vis, toggleFilterVis, visFlag, title, children}) => (
-        <button
-            className={classNames("btn btn-secondary", {
-                active: (vis & visFlag) !== 0,
-            })}
-            onClick={onEvent(() => toggleFilterVis(visFlag))}
-            title={title}
-        >
-            {children}
-        </button>
-    )
+const NotesText = ({notes}) => h("div", {
+    dangerouslySetInnerHTML: {__html: marked(notes)}
+});
+
+const NoNotes = () => h("p", null, h("em", null, "No notes recorded"));
+
+const MaybeShowNotes = ({notes}) => h("div#noteText", null,
+    notes ? h(NotesText, {notes}) : h(NoNotes));
+
+const EditNotes = observer(({lkey}, {s}) => h("div", null, [
+    h("fieldset.form-group", null, [
+        h("label.sr-only", {htmlFor: "editNotes"}, "Enter location notes"),
+        h("textarea#editNotes.form-control", {
+            rows: 3,
+            value: s.editNotes,
+            autoFocus: true,
+            onChange: e => s.changeNotes(e.target.value),
+        }),
+    ]),
+    h("fieldset.btn-group.btn-group-sm", null, [
+        h("button.btn.btn-primary", {onClick: () => s.commitNotes(lkey)},
+            [h(Icon, {name: "floppy-o"}), " Save"]),
+        h("button.btn.btn-secondary", {onClick: () => s.discardNotes()}, "Cancel")
+    ]),
+]));
+
+const ShowNotes = observer(({lkey}, {s}) => h("div", null, [
+    h(MaybeShowNotes, {notes: s.notes.get(lkey)}),
+    h("fieldset.form-group", null, h("button.btn.btn-secondary.btn-sm", {
+        onClick: () => s.startEditNotes(lkey),
+    }, [h("span.fa.fa-pencil"), " Edit"]))
+]));
+
+const Notes = observer(({lkey}, {s}) => h("div#notes", null,
+    s.editingNotes ? h(EditNotes, {lkey}) : h(ShowNotes, {lkey})));
+
+const LocHeading = ({rkey, lkey, callsign, desc, elig}) => h("div", null, [
+    h("h1", null, h("a", {href: locUrl(rkey, lkey)}, callsign)),
+    h("p.desc", {title: `${desc} / ${elig}`}, desc),
+    h(LocControls, {lkey}),
+    h("h2", null, "Notes"),
+    h(Notes, {lkey}),
+]);
+
+const Heading = observer((_, {s}) => h(LocHeading, s.curLoc));
+
+const Emission = ({raw, em}) => h("li", {title: raw},
+    `${em.bandwidth / 1.0e3}kHz, ${em.modulation}, ${em.signal}, ${em.info}`);
+
+const Freq = ({rkey, fkey, freq, power, rxPower, emissions}) => (
+    h("div.freq", null, [
+        h("div.row", null, [
+            h("h2.col-xs-10", null, h("a", {
+                href: freqUrl(rkey, fkey),
+                title: `${freq}Hz`,
+            }, `${dispFreq(freq)}MHz`)),
+            h("div.sReading.col-xs-2", {title: `${power / 1.0e3}W`},
+                calcSReading(rxPower)),
+        ]),
+        h("ul", null, emissions.map(raw =>
+            h(Emission, {raw, em: parseEmission(raw)}))),
+    ])
 );
 
-const Filters = connect(null, actions)(
-    ({commitFilters}) => (
-        <form onSubmit={onEvent(commitFilters)}>
-            <fieldset className="form-group">
-                <label htmlFor="freqLower">Lower frequency</label>
-                <div className="input-group">
-                    <FilterInput id="freqLower" disp={dispFreq} proc={procFreq} />
-                    <div className="input-group-addon">MHz</div>
-                </div>
-            </fieldset>
-            <fieldset className="form-group">
-                <label htmlFor="freqUpper">Upper frequency</label>
-                <div className="input-group">
-                    <FilterInput id="freqUpper" disp={dispFreq} proc={procFreq} />
-                    <div className="input-group-addon">MHz</div>
-                </div>
-            </fieldset>
-            <fieldset className="form-group">
-                <label htmlFor="rxPowerLower">Receive power</label>
-                <div className="input-group">
-                    <FilterInput id="rxPowerLower" />
-                    <div className="input-group-addon">dBm</div>
-                </div>
-            </fieldset>
-            <fieldset className="form-group" id="visibility">
-                <label htmlFor="visibility">Visibility</label>
-                <div className="btn-group btn-block">
-                    <FilterVisibility visFlag={VIS.UNCONFIRMED} title="Unconfirmed">
-                        <Icon name="question" />
-                    </FilterVisibility>
-                    <FilterVisibility visFlag={VIS.IGNORED} title="Ignored">
-                        <Icon name="ban" />
-                    </FilterVisibility>
-                    <FilterVisibility visFlag={VIS.REVIEWING} title="Reviewing">
-                        <Icon name="eye" />
-                    </FilterVisibility>
-                    <FilterVisibility visFlag={VIS.CONFIRMED} title="Confirmed">
-                        <Icon name="check" />
-                    </FilterVisibility>
-                    <FilterVisibility visFlag={VIS.ANNOTATED} title="Annotated">
-                        <Icon name="pencil" />
-                    </FilterVisibility>
-                </div>
-            </fieldset>
-            <button type="submit" className="btn btn-primary">Filter</button>
-        </form>
-    )
+const Freqs = observer((_, {s}) => h("div", null,
+    s.curLoc.freqs.map(info => h(Freq, Object.assign({rkey: s.curLoc.rkey}, info)))));
+
+const Info = () => h("div", null, [
+    h(Heading),
+    h(Freqs),
+]);
+
+const NoInfo = () => h("p", null, h("em", null, "No location selected"));
+
+const MaybeInfo = observer((_, {s}) => h("div#info.pane", null,
+    s.curLoc ? h(Info) : h(NoInfo)));
+
+const FilterInput = observer(({id, disp=defaultDisp, proc=defaultProc}, {s}) => (
+    h("input.form-control", {
+        id,
+        type: "text",
+        value: disp(s.editFilters[id]),
+        onChange: onFilterChange(id, s.changeFilter.bind(s), proc),
+    })
+));
+
+const FilterVisibility = observer(({visFlag, title, children}, {s}) => (
+    h("button", {
+        className: classNames("btn btn-secondary", {
+            active: (s.editFilters.vis & visFlag) !== 0,
+        }),
+        onClick: onEvent(() => s.toggleFilterVis(visFlag)),
+        title,
+    }, children)
+));
+
+const Filters = observer((_, {s}) => (
+    h("form", {onSubmit: onEvent(() => s.commitFilters())}, [
+        h("fieldset.form-group", null, [
+            h("label", {htmlFor: "freqLower"}, "Lower frequency"),
+            h("div.input-group", null, [
+                h(FilterInput, {id: "freqLower", disp: dispFreq, proc: procFreq}),
+                h("div.input-group-addon", null, "MHz"),
+            ])
+        ]),
+        h("fieldset.form-group", null, [
+            h("label", {htmlFor: "freqUpper"}, "Upper frequency"),
+            h("div.input-group", null, [
+                h(FilterInput, {id: "freqUpper", disp: dispFreq, proc: procFreq}),
+                h("div.input-group-addon", null, "MHz"),
+            ])
+        ]),
+        h("fieldset.form-group", null, [
+            h("label", {htmlFor: "rxPowerLower"}, "Receive power"),
+            h("div.input-group", null, [
+                h(FilterInput, {id: "rxPowerLower"}),
+                h("div.input-group-addon", null, "dBm"),
+            ])
+        ]),
+        h("fieldset.form-group#visibility", null, [
+            h("label", {htmlFor: "visibility"}, "Visibility"),
+            h("div.btn-group.btn-block", null, [
+                h(FilterVisibility, {visFlag: VIS.UNCONFIRMED, title: "Unconfirmed"},
+                    h(Icon, {name: "question"})),
+                h(FilterVisibility, {visFlag: VIS.IGNORED, title: "Ignored"},
+                    h(Icon, {name: "ban"})),
+                h(FilterVisibility, {visFlag: VIS.REVIEWING, title: "Reviewing"},
+                    h(Icon, {name: "eye"})),
+                h(FilterVisibility, {visFlag: VIS.CONFIRMED, title: "Confirmed"},
+                    h(Icon, {name: "check"})),
+                h(FilterVisibility, {visFlag: VIS.ANNOTATED, title: "Annotated"},
+                    h(Icon, {name: "pencil"})),
+            ]),
+        ]),
+        h("button.btn.btn-primary", {type: "submit"}, "Filter"),
+    ])
+));
+
+const MaybeList = observer((_, {s}) =>
+    s.locs ? h(List, {
+        locs: s.locs,
+        locHover: loc => () => previewDebounce(() => {
+            s.setCenter(loc);
+            s.setPreviewLoc(loc);
+        }),
+        locLeave: _ => () => previewDebounce(() => s.resetPreviewLoc()),
+    }) :
+    h(NoList)
 );
 
-const MaybeList = connect(({locs}) => ({locs}), actions)(
-    ({locs, setCenter, setPreviewLoc, resetPreviewLoc}) => locs ?
-        <List locs={locs}
-            locHover={loc => () => previewDebounce(() => {
-                setCenter(loc);
-                setPreviewLoc(loc);
-            })}
-            locLeave={_ => () => previewDebounce(resetPreviewLoc)}
-        /> :
-        <NoList />
-);
+const NoList = () => h("p", null, "No locations found");
 
-const NoList = () => <p>No locations found</p>;
+const List = ({locs, locHover, locLeave}) => h("ul#list.pane", null, [
+    h("p", null, `${locs.length} locations`),
+    h("div", null, locs.map(loc => h("li", {
+        onMouseEnter: locHover(loc),
+        onMouseLeave: locLeave(loc),
+    }, [
+        h("h1", null, h(Link, {href: `/info/${loc.lkey}`}, `${loc.callsign}`)),
+        h("p.desc", null, `${loc.desc}`),
+        h("p", null, loc.freqs.map(f => dispFreq(f.freq)).join(", ")),
+    ])))
+]);
 
-const List = ({locs, locHover, locLeave}) => (
-    <ul id="list" className="pane">
-        <p>{locs.length} locations</p>
-        {locs.map(loc =>
-            <li key={loc.lkey}
-                onMouseEnter={locHover(loc)}
-                onMouseLeave={locLeave(loc)}
-            >
-                <h1><Link to={`/info/${loc.lkey}`}>{loc.callsign}</Link></h1>
-                <p className="desc">{loc.desc}</p>
-                <p>{loc.freqs.map(f => dispFreq(f.freq)).join(", ")}</p>
-            </li>
-        )}
-    </ul>
-);
+const PANES = {
+    filters: Filters,
+    list: MaybeList,
+    info: MaybeInfo,
+};
 
-const Tab = ({active, ...props}) => (
-    <li className="nav-item">
-        <Link className={classNames("nav-link", {active})} {...props} />
-    </li>
-);
+const SidebarPanes = observer((_, {s}) => h("div", null, h(PANES[s.curTab])));
 
-const Tabs = ({children}) => <nav>
-    <ul className="nav nav-tabs">{children}</ul>
-</nav>;
+const Tab = ({active, ...props}) => h("li.nav-item", null,
+    h(Link, Object.assign(props, {className: classNames("nav-link", {active})})));
 
-const SidebarTabs = connect(({curTab}) => ({
-    curTab,
-}))(
-    ({curTab}) => (
-        <Tabs>
-            <Tab active={curTab === "info"} to="/info">Info</Tab>
-            <Tab active={curTab === "list"} to="/list">List</Tab>
-            <Tab active={curTab === "filters"} to="/filters">Filters</Tab>
-        </Tabs>
-    )
-);
+const Tabs = ({children}) => h("nav", null, h("ul.nav.nav-tabs", null, children));
 
-const SidebarPanes = connect(({curTab}) => ({curTab}))(
-    ({curTab}) => <div>
-        {curTab === "filters" && <Filters />}
-        {curTab === "list" && <MaybeList />}
-        {curTab === "info" && <MaybeInfo />}
-    </div>
-);
+const SidebarTabs = observer((_, {s}) => h(Tabs, null, [
+    h(Tab, {active: s.curTab === "info", href: "/info"}, "Info"),
+    h(Tab, {active: s.curTab === "list", href: "/list"}, "List"),
+    h(Tab, {active: s.curTab === "filters", href: "/filters"}, "Filters"),
+]));
 
-const Main = () => <div>
-    <SidebarTabs />
-    <SidebarPanes />
-</div>;
-
-const App = props => (
-    <Provider {...props}>
-        <Main />
-    </Provider>
-);
+const App = (s, hist) => h(createContext({s, hist}), null, h("main", null, [
+    h(SidebarTabs),
+    h(SidebarPanes),
+]));
 
 export default App;
