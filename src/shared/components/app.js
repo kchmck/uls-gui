@@ -219,13 +219,15 @@ const List = ({locs, locHover, locLeave}) => h("ul#list.pane", null, [
     ])))
 ]);
 
-const PANES = {
-    filters: Filters,
-    list: MaybeList,
-    info: MaybeInfo,
-};
+const MaybeVisible = ({hidden, children}) => h("div", {
+    className: classNames({hidden})
+}, children);
 
-const SidebarPanes = observer((_, {s}) => h("div", null, h(PANES[s.curTab])));
+const SidebarPanes = observer((_, {s}) => h("div", null, [
+    h(MaybeVisible, {hidden: s.curTab !== "info"}, h(MaybeInfo)),
+    h(MaybeVisible, {hidden: s.curTab !== "list"}, h(MaybeList)),
+    h(MaybeVisible, {hidden: s.curTab !== "filters"}, h(Filters)),
+]));
 
 const Tab = ({active, ...props}) => h("li.nav-item", null,
     h(Link, Object.assign(props, {className: classNames("nav-link", {active})})));
