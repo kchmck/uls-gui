@@ -16,7 +16,7 @@
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
     "babel-register": "^6.24.1",
-    "chai": "^3.5.0",
+    "chai": "^4.0.2",
     "classnames": "^2.2.5",
     "eslint": "^4.1.0",
     "history": "^3.0.0",
