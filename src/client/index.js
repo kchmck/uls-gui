@@ -2,8 +2,8 @@ import "babel-polyfill";
 
 import Inferno from "inferno";
 import axios from "axios";
+import createHistory from "history/createBrowserHistory";
 import {autorun} from "mobx";
-import {createHistory} from "history";
 
 import App from "../shared/components/app";
 import Overlay from "../shared/components/overlay";
@@ -72,7 +72,7 @@ function initClient() {
         axios.get("/api/records").then(({data}) => {
             state.initLocs(data);
 
-            router.handlePath(hist.getCurrentLocation());
+            router.handlePath(hist.location);
             hist.listen(router.handlePath);
         }),
     ]);

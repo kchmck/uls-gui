@@ -19,7 +19,7 @@
     "chai": "^4.0.2",
     "classnames": "^2.2.5",
     "eslint": "^4.1.0",
-    "history": "^3.0.0",
+    "history": "^4.6.3",
     "inferno": "^3.6.1",
     "inferno-component": "^3.6.1",
     "inferno-hyperscript": "^3.6.1",

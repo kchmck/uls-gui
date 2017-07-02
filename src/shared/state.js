@@ -186,7 +186,7 @@ export const createState = hist => observable({
     }),
 
     commitFilters: action(function() {
-        hist.push(Object.assign(hist.getCurrentLocation(), {
+        hist.push(Object.assign({}, hist.location, {
             search: `?${qs.stringify(this.editFilters)}`
         }));
     }),

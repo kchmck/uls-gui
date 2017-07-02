@@ -26,7 +26,7 @@ const handleClick = fn => e => {
 };
 
 const historyPush = hist => newLoc => {
-    let loc = hist.getCurrentLocation();
+    let loc = hist.location;
 
     if (typeof newLoc === "string") {
         loc.pathname = newLoc;
