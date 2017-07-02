@@ -1,3 +1,4 @@
+var UglifyEsPlugin = require('uglify-es-webpack-plugin');
 var path = require("path");
 var webpack = require("webpack");
 
@@ -9,7 +10,7 @@ var plugins = [
 ];
 
 if (process.env.NODE_ENV == "production") {
-    plugins.push(new webpack.optimize.UglifyJsPlugin({compress: true}));
+    plugins.push(new UglifyEsPlugin());
 }
 
 module.exports = {
