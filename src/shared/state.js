@@ -11,7 +11,7 @@ import {
     milliWattToDbm,
 } from "./util";
 
-const calcPathLoss = createPathLossCalc(2.8);
+const calcPathLoss = createPathLossCalc(3.0);
 
 export const createState = hist => observable({
     google: null,
