@@ -4388,10 +4388,6 @@ yargs@~3.10.0:
     decamelize "^1.0.0"
     window-size "0.1.0"
 
-zip-array@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/zip-array/-/zip-array-1.0.1.tgz#99e7c23d7f449030e7f3a21a055785b46aeea58d"
-
 zip-object@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/zip-object/-/zip-object-0.1.0.tgz#c1a0da04c88c837756e248680a03ff902ec3f53a"
