@@ -1,42 +1,53 @@
+import Component from "inferno-component";
 import h from "inferno-hyperscript";
 
-const handleClick = fn => e => {
-    // Verify left button.
-    if (e.button !== 0) {
-        return;
+export class Link extends Component {
+    constructor(props, context) {
+        super(props, context);
+
+        this.onClick = this.onClick.bind(this);
     }
 
-    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) {
-        return;
+    onClick(e) {
+        // Verify left button.
+        if (e.button !== 0) {
+            return;
+        }
+
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) {
+            return;
+        }
+
+        if (e.defaultPrevented) {
+            return;
+        }
+
+        let el = e.currentTarget;
+
+        if (el.target) {
+            return;
+        }
+
+        this.historyPush(el.pathname);
+
+        e.preventDefault();
     }
 
-    if (e.defaultPrevented) {
-        return;
+    historyPush(newLoc) {
+        let loc = this.context.hist.location;
+
+        if (typeof newLoc === "string") {
+            loc.pathname = newLoc;
+        } else {
+            Object.assign(loc, newLoc);
+        }
+
+        this.context.hist.push(loc);
     }
 
-    let el = e.currentTarget;
-
-    if (el.target) {
-        return;
+    render() {
+        return h("a", Object.assign(this.props, {
+            onClick: this.onClick,
+        }));
     }
-
-    fn(el.pathname);
-
-    e.preventDefault();
-};
-
-const historyPush = hist => newLoc => {
-    let loc = hist.location;
-
-    if (typeof newLoc === "string") {
-        loc.pathname = newLoc;
-    } else {
-        Object.assign(loc, newLoc);
-    }
-
-    hist.push(loc);
-};
-
-export const Link = (props, {hist}) => (
-    h("a", Object.assign(props, {onClick: handleClick(historyPush(hist))}))
-);
+}
