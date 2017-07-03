@@ -29,7 +29,7 @@ function calcSat(dbm) {
 const Marker = ({loc, pos, active=false, preview=false}) => (
     h(Link, {
         href: `/info/${loc.lkey}`,
-        className: classNames("marker fade-in", {active, preview}),
+        className: classNames("marker fadeIn", {active, preview}),
         style: {
             background: calcBackground(loc.freqs[0].rxPower),
             left: pos.x,
