@@ -26,10 +26,10 @@ function calcSat(dbm) {
     return Math.min(Math.max((dbm + 127.0) / 54.0, 0.0), 1.0);
 }
 
-const Marker = ({loc, pos, active=false, preview=false}) => (
+const Marker = ({loc, pos, active=false, preview=false, fadeIn=true}) => (
     h(Link, {
         href: `/info/${loc.lkey}`,
-        className: classNames("marker fadeIn", {active, preview}),
+        className: classNames("marker", {active, preview, fadeIn}),
         style: {
             background: calcBackground(loc.freqs[0].rxPower),
             left: pos.x,
@@ -43,7 +43,8 @@ const ActiveMarker = observer(({proj}, {s}) => (
         h(Marker, {
             loc: s.curLoc,
             pos: calcPos(s.curLoc, proj),
-            active: true
+            active: true,
+            fadeIn: false,
         }) :
         h("span")
 ));
