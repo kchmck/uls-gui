@@ -109,8 +109,8 @@ const Freq = ({rkey, fkey, freq, power, rxPower, emissions}) => (
         h("div.row", null, [
             h("h2.col-xs-10", null, h("a", {
                 href: freqUrl(rkey, fkey),
-                title: `${freq}Hz`,
-            }, `${dispFreq(freq)}MHz`)),
+                title: `${freq} Hz`,
+            }, `${dispFreq(freq)} MHz`)),
             h("div.sReading.col-xs-2", {title: `${power / 1.0e3}W`},
                 calcSReading(rxPower)),
         ]),
