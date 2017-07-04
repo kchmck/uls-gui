@@ -33,7 +33,8 @@ const defaultProc = x => x;
 const Icon = ({name}) => h("span", {className: `fa fa-${name}`});
 
 const ControlButton = ({active, ...props}) => h("button", Object.assign(props, {
-    className: classNames("btn btn-secondary", {active})
+    type: "button",
+    className: classNames("btn btn-secondary", {active}),
 }));
 
 const CatButton = observer(({lkey, cat, title, children}, {s}) => h(ControlButton, {
@@ -143,6 +144,7 @@ const FilterInput = observer(({id, disp=defaultDisp, proc=defaultProc}, {s}) => 
 
 const FilterVisibility = observer(({visFlag, title, children}, {s}) => (
     h("button", {
+        type: "button",
         className: classNames("btn btn-secondary", {
             active: (s.editFilters.vis & visFlag) !== 0,
         }),
