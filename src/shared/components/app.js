@@ -92,7 +92,7 @@ const Notes = observer(({lkey}, {s}) => h("div#notes", null,
     s.editingNotes ? h(EditNotes, {lkey}) : h(ShowNotes, {lkey})));
 
 const LocHeading = ({rkey, lkey, callsign, desc, elig}) => h("div", null, [
-    h("h1", null, h("a", {href: locUrl(rkey, lkey)}, callsign)),
+    h("h1.callsign", null, h("a", {href: locUrl(rkey, lkey)}, callsign)),
     h("p.desc", {title: `${desc} / ${elig}`}, desc),
     h(LocControls, {lkey}),
     h("h2", null, "Notes"),
@@ -213,7 +213,7 @@ const List = ({locs, locHover, locLeave}) => h("ul#list.pane", null, [
         onMouseEnter: locHover(loc),
         onMouseLeave: locLeave(loc),
     }, [
-        h("h1", null, h(Link, {href: `/info/${loc.lkey}`}, `${loc.callsign}`)),
+        h("h1.callsign", null, h(Link, {href: `/info/${loc.lkey}`}, `${loc.callsign}`)),
         h("p.desc", null, `${loc.desc}`),
         h("p", null, loc.freqs.map(f => dispFreq(f.freq)).join(", ")),
     ])))
