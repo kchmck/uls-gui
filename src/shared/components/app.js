@@ -151,7 +151,7 @@ const FilterVisibility = observer(({visFlag, title, children}, {s}) => (
     }, children)
 ));
 
-const Filters = observer((_, {s}) => (
+const Filters = (_, {s}) => (
     h("form", {onSubmit: onEvent(() => s.commitFilters())}, [
         h("fieldset.form-group", null, [
             h("label", {htmlFor: "freqLower"}, "Lower frequency"),
@@ -191,7 +191,7 @@ const Filters = observer((_, {s}) => (
         ]),
         h("button.btn.btn-primary", {type: "submit"}, "Filter"),
     ])
-));
+);
 
 const MaybeList = observer((_, {s}) =>
     s.locs ? h(List, {
