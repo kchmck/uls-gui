@@ -193,9 +193,46 @@ const Filters = (_, {s}) => (
     ])
 );
 
-const MaybeList = observer((_, {s}) =>
-    s.locs ? h(List, {
-        locs: s.locs,
+const SearchPane = () => h("div#search.pane", null, [
+    h(SearchForm),
+    h(SearchList),
+]);
+
+const SearchForm = observer((_, {s}) => (
+    h("form", {onSubmit: onEvent(() => s.commitSearch())}, [
+        h("fieldset.form-group", {
+            className: classNames({
+                "has-danger": Number.isNaN(s.parsedSearchFreq),
+            }),
+        }, [
+            h("label.form-control-label", {htmlFor: "searchFreq"}, "Search frequency"),
+            h("div.input-group", null, [
+                h(SearchInput),
+                h("div.input-group-addon", null, "MHz"),
+            ])
+        ]),
+        h("fieldset.form-group", null, h("button.btn.btn-primary", {
+            type: "submit",
+            disabled: Number.isNaN(s.parsedSearchFreq),
+        }, "Search (±10kHz)")),
+    ])
+));
+
+const SearchInput = observer((_, {s}) => h("input.form-control", {
+    id: "searchFreq",
+    type: "text",
+    value: s.editSearchFreq,
+    onInput: onEvent(e => s.changeSearch(e.target.value)),
+}));
+
+const SearchList = observer((_, {s}) => h(MaybeList, {locs: s.searchLocs}));
+
+const ListPane = observer((_, {s}) => h("div#list.pane", null,
+    h(MaybeList, {locs: s.locs})));
+
+const MaybeList = ({locs}, {s}) => (
+    locs ? h(List, {
+        locs,
         locHover: loc => () => previewDebounce(() => {
             s.setCenter(loc);
             s.setPreviewLoc(loc);
@@ -207,7 +244,7 @@ const MaybeList = observer((_, {s}) =>
 
 const NoList = () => h("p", null, "No locations found");
 
-const List = ({locs, locHover, locLeave}) => h("ul#list.pane", null, [
+const List = ({locs, locHover, locLeave}) => h("ul.locList", null, [
     h("p", null, `${locs.length} locations`),
     h("div", null, locs.map(loc => h("li", {
         onMouseEnter: locHover(loc),
@@ -225,8 +262,9 @@ const MaybeVisible = ({hidden, children}) => h("div", {
 
 const SidebarPanes = observer((_, {s}) => h("div", null, [
     h(MaybeVisible, {hidden: s.curTab !== "info"}, h(MaybeInfo)),
-    h(MaybeVisible, {hidden: s.curTab !== "list"}, h(MaybeList)),
+    h(MaybeVisible, {hidden: s.curTab !== "list"}, h(ListPane)),
     h(MaybeVisible, {hidden: s.curTab !== "filters"}, h(Filters)),
+    h(MaybeVisible, {hidden: s.curTab !== "search"}, h(SearchPane)),
 ]));
 
 const Tab = ({active, ...props}) => h("li.nav-item", null,
@@ -238,6 +276,7 @@ const SidebarTabs = observer((_, {s}) => h(Tabs, null, [
     h(Tab, {active: s.curTab === "info", href: "/info"}, "Info"),
     h(Tab, {active: s.curTab === "list", href: "/list"}, "List"),
     h(Tab, {active: s.curTab === "filters", href: "/filters"}, "Filters"),
+    h(Tab, {active: s.curTab === "search", href: "/search"}, "Search"),
 ]));
 
 const App = (s, hist) => h(createContext({s, hist}), null, h("main", null, [

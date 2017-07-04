@@ -34,5 +34,6 @@ export const createRoutes = state => {
                 state.resetPreviewLoc();
                 state.discardNotes();
             }
-        ));
+        ))
+        .addRoute("/search", withTitle("Search", () => state.setTab("search")));
 };

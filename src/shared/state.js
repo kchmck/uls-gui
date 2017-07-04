@@ -1,7 +1,7 @@
 import qs from "query-string";
 import {observable, computed, action, autorun} from "mobx";
 
-import {CENTER, CUTOFF_DIST} from "./consts";
+import {CENTER, CUTOFF_DIST, SEARCH_OFFSET} from "./consts";
 import {VIS, createVisCalc} from "./visibility";
 
 import {
@@ -34,6 +34,18 @@ export const createState = hist => observable({
     notes: observable.map(),
     editNotes: "",
     editingNotes: false,
+
+    curError: null,
+
+    editSearchFreq: "150.0",
+    parsedSearchFreq: computed(function() {
+        return Number(this.editSearchFreq);
+    }),
+    searchFreq: NaN,
+
+    setError: action(function(err) {
+        this.curError = err;
+    }),
 
     initMap: action(function(google, map, centerMarker) {
         Object.assign(this, {google, map, centerMarker});
@@ -189,5 +201,27 @@ export const createState = hist => observable({
         hist.push(Object.assign({}, hist.location, {
             search: `?${qs.stringify(this.editFilters)}`
         }));
+    }),
+
+    searchLocs: computed(function() {
+        if (isNaN(this.searchFreq)) {
+            return [];
+        }
+
+        let center = this.searchFreq * 1.0e6;
+        let lower = center - SEARCH_OFFSET;
+        let upper = center + SEARCH_OFFSET;
+
+        return this.locs.map(loc => Object.assign({}, loc, {
+            freqs: loc.freqs.filter(f => f.freq >= lower && f.freq <= upper)
+        })).filter(loc => loc.freqs.length > 0);
+    }),
+
+    changeSearch: action(function(search) {
+        this.editSearchFreq = search;
+    }),
+
+    commitSearch: action(function() {
+        this.searchFreq = this.parsedSearchFreq;
     }),
 });
