@@ -42,8 +42,12 @@ const CatButton = observer(({lkey, cat, title, children}, {s}) => h(ControlButto
 
 const LocControls = ({lkey}, {s}) => h("div#controls", null,
     h("div.btn-group.btn-group-sm", null, [
-        h(ControlButton, {onClick: () => s.setCurCenter(), title: "Center"},
-            h(Icon, {name: "crosshairs"})),
+        h(ControlButton, {
+            onClick: () => s.setCurCenter(),
+            title: "Center",
+            onMouseEnter: () => s.enterPreview(s.curLoc),
+            onMouseLeave: () => s.exitPreview(0),
+        }, h(Icon, {name: "crosshairs"})),
         h(CatButton, {lkey, cat: VIS.IGNORED, title: "Ignore"},
             h(Icon, {name: "ban"})),
         h(CatButton, {lkey, cat: VIS.REVIEWING, title: "Review"},
@@ -238,7 +242,7 @@ const MaybeList = ({locs}, {s}) => (
     locs ? h(List, {
         locs,
         locHover: loc => s.enterPreview(loc),
-        locLeave: () => s.exitPreview(),
+        locLeave: () => s.exitPreview(300),
     }) :
     h(NoList)
 );

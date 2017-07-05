@@ -155,6 +155,7 @@ export const createState = hist => observable({
     }),
 
     setCurCenter: action(function() {
+        this.saveCenter();
         this.setCenter(this.curLoc);
     }),
 
@@ -242,11 +243,11 @@ export const createState = hist => observable({
         this.setPreviewLoc(loc);
     }),
 
-    exitPreview: action(function() {
+    exitPreview: action(function(delay) {
         this.exitPreviewTimer = setTimeout(() => {
             this.restoreCenter();
             this.resetPreviewLoc();
-        }, 300);
+        }, delay);
     }),
 
     saveCenter: action(function() {
