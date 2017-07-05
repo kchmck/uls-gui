@@ -91,11 +91,16 @@ const Notes = observer(({lkey}, {s}) => h("div#notes", null,
 
 const LocHeading = ({rkey, lkey, callsign, desc, elig}) => h("div", null, [
     h("h1.callsign", null, h("a", {href: locUrl(rkey, lkey)}, callsign)),
-    h("p.desc", {title: `${desc} / ${elig}`}, desc),
+    h("p.desc", null, desc),
     h(LocControls, {lkey}),
+    h("h2", null, "Eligibility"),
+    h(MaybeElig, {elig}),
     h("h2", null, "Notes"),
     h(Notes, {lkey}),
 ]);
+
+const MaybeElig = ({elig}) => h("p", null,
+    elig || h("em", null, "No eligibility given"));
 
 const Heading = observer((_, {s}) => h(LocHeading, s.curLoc));
 
