@@ -19,7 +19,11 @@ export const createState = hist => observable({
     centerMarker: null,
     locs: [],
     curLoc: null,
+
     previewLoc: null,
+    exitPreviewTimer: null,
+    savedCenter: null,
+
     filters: {
         freqLower: 0,
         freqUpper: 5000.0e6,
@@ -223,5 +227,33 @@ export const createState = hist => observable({
 
     commitSearch: action(function() {
         this.searchFreq = this.parsedSearchFreq;
+    }),
+
+    enterPreview: action(function(loc) {
+        // Only save center when initially entering preview.
+        if (this.exitPreviewTimer === null) {
+            this.saveCenter();
+        }
+
+        clearTimeout(this.exitPreviewTimer);
+        this.exitPreviewTimer = null;
+
+        this.setCenter(loc);
+        this.setPreviewLoc(loc);
+    }),
+
+    exitPreview: action(function() {
+        this.exitPreviewTimer = setTimeout(() => {
+            this.restoreCenter();
+            this.resetPreviewLoc();
+        }, 300);
+    }),
+
+    saveCenter: action(function() {
+        this.savedCenter = this.map.getCenter();
+    }),
+
+    restoreCenter: action(function() {
+        this.map.setCenter(this.savedCenter);
     }),
 });

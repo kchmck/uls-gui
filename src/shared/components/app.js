@@ -11,10 +11,7 @@ import {locUrl, freqUrl} from "../urls";
 import {
     calcSReading,
     parseEmission,
-    createDebounce,
 } from "../util";
-
-const previewDebounce = createDebounce(100);
 
 const onEvent = fn => e => {
     e.preventDefault();
@@ -235,11 +232,8 @@ const ListPane = observer((_, {s}) => h("div#list.pane", null,
 const MaybeList = ({locs}, {s}) => (
     locs ? h(List, {
         locs,
-        locHover: loc => () => previewDebounce(() => {
-            s.setCenter(loc);
-            s.setPreviewLoc(loc);
-        }),
-        locLeave: _ => () => previewDebounce(() => s.resetPreviewLoc()),
+        locHover: loc => s.enterPreview(loc),
+        locLeave: () => s.exitPreview(),
     }) :
     h(NoList)
 );
@@ -249,8 +243,8 @@ const NoList = () => h("p", null, "No locations found");
 const List = ({locs, locHover, locLeave}) => h("ul.locList", null, [
     h("p", null, `${locs.length} locations`),
     h("div", null, locs.map(loc => h("li", {
-        onMouseEnter: locHover(loc),
-        onMouseLeave: locLeave(loc),
+        onMouseEnter: () => locHover(loc),
+        onMouseLeave: locLeave,
     }, [
         h("h1.callsign", null, h(Link, {href: `/info/${loc.lkey}`}, `${loc.callsign}`)),
         h("p.desc", null, `${loc.desc}`),
