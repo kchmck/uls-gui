@@ -30,7 +30,7 @@ lint:
 
 build-web: static/js/app.js static/css/app.css static/fonts
 
-serve: lib/server/index.js
+dev-serve: lib/server/index.js
 	nodemon -w views -w static -e hbs,js $< -- $(SERVE_FLAGS)
 
-.PHONY: build test lint build-web serve
+.PHONY: build test lint build-web dev-serve
