@@ -206,32 +206,38 @@ const SearchPane = () => h("div#search.pane", null, [
     h(SearchList),
 ]);
 
-const SearchForm = observer((_, {s}) => (
+const SearchForm = (_, {s}) => (
     h("form", {onSubmit: onEvent(() => s.commitSearch())}, [
-        h("fieldset.form-group", {
-            className: classNames({
-                "has-danger": Number.isNaN(s.parsedSearchFreq),
+        h(SearchInput),
+        h(SearchSubmit),
+    ])
+);
+
+const SearchInput = observer((_, {s}) => (
+    h("fieldset", {
+        className: classNames("form-group", {
+            "has-danger": Number.isNaN(s.parsedSearchFreq),
+        }),
+    }, [
+        h("label.form-control-label", {htmlFor: "searchFreq"}, "Search frequency"),
+        h("div.input-group", null, [
+            h("input.form-control", {
+                id: "searchFreq",
+                type: "text",
+                value: s.editSearchFreq,
+                onInput: onEvent(e => s.changeSearch(e.target.value)),
             }),
-        }, [
-            h("label.form-control-label", {htmlFor: "searchFreq"}, "Search frequency"),
-            h("div.input-group", null, [
-                h(SearchInput),
-                h("div.input-group-addon", null, "MHz"),
-            ])
+            h("div.input-group-addon", null, "MHz"),
         ]),
-        h("fieldset.form-group", null, h("button.btn.btn-primary", {
-            type: "submit",
-            disabled: Number.isNaN(s.parsedSearchFreq),
-        }, "Search (±10kHz)")),
     ])
 ));
 
-const SearchInput = observer((_, {s}) => h("input.form-control", {
-    id: "searchFreq",
-    type: "text",
-    value: s.editSearchFreq,
-    onInput: onEvent(e => s.changeSearch(e.target.value)),
-}));
+const SearchSubmit = observer((_, {s}) => (
+    h("fieldset.form-group", null, h("button.btn.btn-primary", {
+        type: "submit",
+        disabled: Number.isNaN(s.parsedSearchFreq),
+    }, "Search (±10kHz)"))
+));
 
 const SearchList = observer((_, {s}) => h(MaybeList, {locs: s.searchLocs}));
 
