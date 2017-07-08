@@ -201,22 +201,22 @@ const Filters = (_, {s}) => (
     ])
 );
 
-const SearchPane = () => h("div#search.pane", null, [
-    h(SearchForm),
+const SearchPane = (_, {s}) => h("div#search.pane", null, [
+    h(SearchForm, {search: s.search}),
     h(SearchList),
 ]);
 
-const SearchForm = (_, {s}) => (
-    h("form", {onSubmit: onEvent(() => s.commitSearch())}, [
-        h(SearchInput),
-        h(SearchSubmit),
+const SearchForm = ({search}, {s}) => (
+    h("form", {onSubmit: onEvent(() => s.search.commitFreq())}, [
+        h(SearchInput, {search}),
+        h(SearchSubmit, {search}),
     ])
 );
 
-const SearchInput = observer((_, {s}) => (
+const SearchInput = observer(({search}) => (
     h("fieldset", {
         className: classNames("form-group", {
-            "has-danger": Number.isNaN(s.parsedSearchFreq),
+            "has-danger": search.freqInvalid,
         }),
     }, [
         h("label.form-control-label", {htmlFor: "searchFreq"}, "Search frequency"),
@@ -224,18 +224,18 @@ const SearchInput = observer((_, {s}) => (
             h("input.form-control", {
                 id: "searchFreq",
                 type: "text",
-                value: s.editSearchFreq,
-                onInput: onEvent(e => s.changeSearch(e.target.value)),
+                value: search.editFreq,
+                onInput: onEvent(e => search.changeFreq(e.target.value)),
             }),
             h("div.input-group-addon", null, "MHz"),
         ]),
     ])
 ));
 
-const SearchSubmit = observer((_, {s}) => (
+const SearchSubmit = observer(({search}) => (
     h("fieldset.form-group", null, h("button.btn.btn-primary", {
         type: "submit",
-        disabled: Number.isNaN(s.parsedSearchFreq),
+        disabled: search.freqInvalid,
     }, "Search (±10kHz)"))
 ));
 

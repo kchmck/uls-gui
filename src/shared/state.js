@@ -1,5 +1,5 @@
 import qs from "query-string";
-import {observable, computed, action, autorun} from "mobx";
+import {observable, computed, action, autorun, extendObservable} from "mobx";
 
 import {CENTER, CUTOFF_DIST, SEARCH_OFFSET} from "./consts";
 import {VIS, createVisCalc} from "./visibility";
@@ -41,11 +41,7 @@ export const createState = hist => observable({
 
     curError: null,
 
-    editSearchFreq: "150.0",
-    parsedSearchFreq: computed(function() {
-        return Number(this.editSearchFreq);
-    }),
-    searchFreq: NaN,
+    search: new SearchFormState(),
 
     setError: action(function(err) {
         this.curError = err;
@@ -209,25 +205,17 @@ export const createState = hist => observable({
     }),
 
     searchLocs: computed(function() {
-        if (isNaN(this.searchFreq)) {
+        if (isNaN(this.search.committedFreq)) {
             return [];
         }
 
-        let center = this.searchFreq * 1.0e6;
+        let center = this.search.committedFreq * 1.0e6;
         let lower = center - SEARCH_OFFSET;
         let upper = center + SEARCH_OFFSET;
 
         return this.locs.map(loc => Object.assign({}, loc, {
             freqs: loc.freqs.filter(f => f.freq >= lower && f.freq <= upper)
         })).filter(loc => loc.freqs.length > 0);
-    }),
-
-    changeSearch: action(function(search) {
-        this.editSearchFreq = search;
-    }),
-
-    commitSearch: action(function() {
-        this.searchFreq = this.parsedSearchFreq;
     }),
 
     enterPreview: action(function(loc) {
@@ -258,3 +246,22 @@ export const createState = hist => observable({
         this.map.setCenter(this.savedCenter);
     }),
 });
+
+function SearchFormState() {
+    extendObservable(this, {
+        changeFreq: action(search => {
+            this.editFreq = search;
+        }),
+        commitFreq: action(() => {
+            this.committedFreq = this.parsedFreq;
+        }),
+        editFreq: "150.0",
+        parsedFreq: computed(() => {
+            return Number(this.editFreq);
+        }),
+        freqInvalid: computed(() => {
+            return Number.isNaN(this.parsedFreq);
+        }),
+        committedFreq: NaN,
+    });
+}
