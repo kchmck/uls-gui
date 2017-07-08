@@ -1,5 +1,5 @@
 import qs from "query-string";
-import {observable, computed, action, autorun, extendObservable} from "mobx";
+import {observable, computed, action, extendObservable} from "mobx";
 
 import {CENTER, CUTOFF_DIST, SEARCH_OFFSET} from "./consts";
 import {VIS, createVisCalc} from "./visibility";
@@ -17,7 +17,48 @@ export const createState = hist => observable({
     google: null,
     map: null,
     centerMarker: null,
-    locs: [],
+
+    rawLocs: [],
+    jitterLocs: computed(function() {
+        return this.rawLocs.map(loc => Object.assign(loc, {
+            jitterLat: (Math.random() - 0.5) * 10.0e-3,
+            jitterLng: (Math.random() - 0.5) * 10.0e-3,
+        }));
+    }),
+    distLocs: computed(function() {
+        return this.jitterLocs.map(loc => Object.assign(loc, {
+            dist: calcDist(CENTER, loc),
+        })).filter(loc => loc.dist < CUTOFF_DIST);
+    }),
+    freqLocs: computed(function() {
+        let {freqLower, freqUpper, rxPowerLower} = this.filters;
+
+        return this.distLocs.map(loc => Object.assign({}, loc, {
+            freqs: loc.freqs.filter(f => (
+                f.freq > freqLower && f.freq < freqUpper
+            )).map(f => Object.assign(f, {
+                rxPower: calcRxPower(milliWattToDbm(f.power),
+                                     calcPathLoss(f.freq, loc.dist)),
+            })).filter(f => (
+                f.rxPower > rxPowerLower
+            )).sort((a, b) => (
+                b.rxPower - a.rxPower
+            )),
+        })).filter(loc => loc.freqs.length > 0);
+    }),
+    locs: computed(function() {
+        let {vis} = this.filters;
+        let calcVis = createVisCalc(this.locCat, this.notes);
+
+        return this.freqLocs.map(loc => Object.assign(loc, {
+            vis: calcVis(loc.lkey),
+        })).filter(loc => (
+            (loc.vis & vis) !== 0
+        )).sort((a, b) => (
+            b.freqs[0].rxPower - a.freqs[0].rxPower
+        ));
+    }),
+
     curLoc: null,
 
     previewLoc: null,
@@ -52,50 +93,7 @@ export const createState = hist => observable({
     }),
 
     initLocs: action(function(locs) {
-        let jitterLocs = locs.map(loc => Object.assign(loc, {
-            jitterLat: (Math.random() - 0.5) * 10.0e-3,
-            jitterLng: (Math.random() - 0.5) * 10.0e-3,
-        }));
-
-        let distLocs = computed(() => (
-            jitterLocs.map(loc => Object.assign(loc, {
-                dist: calcDist(CENTER, loc),
-            })).filter(loc => loc.dist < CUTOFF_DIST)
-        ));
-
-        let freqLocs = computed(() => {
-            let {freqLower, freqUpper, rxPowerLower} = this.filters;
-
-            return distLocs.get().map(loc => Object.assign({}, loc, {
-                freqs: loc.freqs.filter(f => (
-                    f.freq > freqLower && f.freq < freqUpper
-                )).map(f => Object.assign(f, {
-                    rxPower: calcRxPower(milliWattToDbm(f.power),
-                                         calcPathLoss(f.freq, loc.dist)),
-                })).filter(f => (
-                    f.rxPower > rxPowerLower
-                )).sort((a, b) => (
-                    b.rxPower - a.rxPower
-                )),
-            })).filter(loc => loc.freqs.length > 0);
-        });
-
-        let visLocs = computed(() => {
-            let {vis} = this.filters;
-            let calcVis = createVisCalc(this.locCat, this.notes);
-
-            return freqLocs.get().map(loc => Object.assign(loc, {
-                vis: calcVis(loc.lkey),
-            })).filter(loc => (
-                (loc.vis & vis) !== 0
-            )).sort((a, b) => (
-                b.freqs[0].rxPower - a.freqs[0].rxPower
-            ));
-        });
-
-        autorun(() => {
-            this.locs = visLocs.get();
-        });
+        this.rawLocs = locs;
     }),
 
     selectLoc: action(function(lkey) {
