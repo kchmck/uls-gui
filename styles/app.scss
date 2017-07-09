@@ -5,6 +5,10 @@ html, body, #map-container, #map, #sidebar {
     height: 100%;
 }
 
+button {
+    cursor: pointer;
+}
+
 #map-container {
     position: fixed;
     left: 0;
