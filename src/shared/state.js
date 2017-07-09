@@ -1,5 +1,5 @@
 import qs from "query-string";
-import {observable, computed, action, extendObservable} from "mobx";
+import {autorun, observable, computed, action, extendObservable} from "mobx";
 
 import {CENTER, CUTOFF_DIST, SEARCH_OFFSET} from "./consts";
 import {VIS, createVisCalc} from "./visibility";
@@ -17,7 +17,9 @@ export function State(hist) {
     extendObservable(this, {
         google: null,
         map: null,
-        centerMarker: null,
+
+        basePos: null,
+        baseMarker: observable.ref(null),
 
         rawLocs: [],
         jitterLocs: computed(() => {
@@ -89,8 +91,22 @@ export function State(hist) {
             this.curError = err;
         }),
 
-        initMap: action((google, map, centerMarker) => {
-            Object.assign(this, {google, map, centerMarker});
+        initMap: action((google, map) => {
+            if (this.google !== null) {
+                throw new Error("map already initialized");
+            }
+
+            Object.assign(this, {google, map});
+
+            this.baseMarker = new google.maps.Marker({map});
+
+            autorun(() => {
+                this.baseMarker.setPosition(this.basePos);
+            });
+        }),
+
+        setBasePos: action(pos => {
+            this.basePos = pos;
         }),
 
         setLocs: action(locs => {
