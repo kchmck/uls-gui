@@ -281,14 +281,12 @@ const SidebarPanes = observer((_, {s}) => h("div", null, [
 const Tab = ({active, ...props}) => h("li.nav-item", null,
     h(Link, Object.assign(props, {className: classNames("nav-link", {active})})));
 
-const Tabs = ({children}) => h("nav", null, h("ul.nav.nav-tabs", null, children));
-
-const SidebarTabs = observer((_, {s}) => h(Tabs, null, [
+const SidebarTabs = observer((_, {s}) => h("nav", null, h("ul.nav.nav-tabs", [
     h(Tab, {active: s.curTab === "info", href: "/info"}, "Info"),
     h(Tab, {active: s.curTab === "list", href: "/list"}, "List"),
     h(Tab, {active: s.curTab === "filters", href: "/filters"}, "Filters"),
     h(Tab, {active: s.curTab === "search", href: "/search"}, "Search"),
-]));
+])));
 
 const App = (s, hist) => h(createContext({s, hist}), null, h("main", null, [
     h(SidebarTabs),
