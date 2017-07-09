@@ -29,10 +29,12 @@ const defaultProc = x => x;
 
 const Icon = ({name}) => h("span", {className: `fa fa-${name}`});
 
-const ControlButton = ({active, ...props}) => h("button", Object.assign(props, {
-    type: "button",
-    className: classNames("btn btn-secondary", {active}),
-}));
+const ControlButton = ({active, ...props}) => (
+    h("button.btn.btn-secondary", Object.assign(props, {
+        type: "button",
+        className: classNames({active}),
+    }))
+);
 
 const CatButton = observer(({lkey, cat, title, children}, {s}) => h(ControlButton, {
     title,
@@ -149,9 +151,9 @@ const FilterInput = observer(({id, disp=defaultDisp, proc=defaultProc}, {s}) => 
 ));
 
 const FilterVisibility = observer(({visFlag, title, children}, {s}) => (
-    h("button", {
+    h("button.btn.btn-secondary", {
         type: "button",
-        className: classNames("btn btn-secondary", {
+        className: classNames({
             active: (s.editFilters.vis & visFlag) !== 0,
         }),
         onClick: onEvent(() => s.toggleFilterVis(visFlag)),
@@ -214,8 +216,8 @@ const SearchForm = ({search}, {s}) => (
 );
 
 const SearchInput = observer(({search}) => (
-    h("fieldset", {
-        className: classNames("form-group", {
+    h("fieldset.form-group", {
+        className: classNames({
             "has-danger": search.freqInvalid,
         }),
     }, [
