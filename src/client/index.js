@@ -38,6 +38,7 @@ function initClient() {
             let map = new google.maps.Map(document.getElementById("map"), {
                 center: CENTER,
                 zoom: DEFAULT_ZOOM,
+                draggableCursor: "default",
                 styles: [
                     {
                         featureType: "poi",
