@@ -106,7 +106,7 @@ const LocHeading = ({rkey, lkey, callsign, desc, elig}) => h("div", null, [
 const MaybeElig = ({elig}) => h("p", null,
     elig || h("em", null, "No eligibility given"));
 
-const Heading = observer((_, {s}) => h(LocHeading, s.curLoc));
+const Heading = ({loc}) => h(LocHeading, loc);
 
 const Emission = ({raw, em}) => h("li", {title: raw},
     `${em.bandwidth / 1.0e3}kHz, ${em.modulation}, ${em.signal}, ${em.info}`);
@@ -126,18 +126,18 @@ const Freq = ({rkey, fkey, freq, power, rxPower, emissions}) => (
     ])
 );
 
-const Freqs = observer((_, {s}) => h("div", null,
-    s.curLoc.freqs.map(info => h(Freq, Object.assign({rkey: s.curLoc.rkey}, info)))));
+const Freqs = ({loc}) => h("div", null,
+    loc.freqs.map(info => h(Freq, Object.assign({rkey: loc.rkey}, info))));
 
-const Info = () => h("div", null, [
-    h(Heading),
-    h(Freqs),
+const Info = ({loc}) => h("div", null, [
+    h(Heading, {loc}),
+    h(Freqs, {loc}),
 ]);
 
 const NoInfo = () => h("p", null, h("em", null, "No location selected"));
 
 const MaybeInfo = observer((_, {s}) => h("div#info.pane", null,
-    s.curLoc ? h(Info) : h(NoInfo)));
+    s.curLoc ? h(Info, {loc: s.curLoc}) : h(NoInfo)));
 
 const FilterInput = observer(({id, disp=defaultDisp, proc=defaultProc}, {s}) => (
     h("input.form-control", {
