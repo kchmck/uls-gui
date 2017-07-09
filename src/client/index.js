@@ -72,7 +72,7 @@ function initClient() {
             }));
         }),
         axios.get("/api/records").then(({data}) => {
-            state.initLocs(data);
+            state.setLocs(data);
 
             router.handlePath(hist.location);
             hist.listen(router.handlePath);

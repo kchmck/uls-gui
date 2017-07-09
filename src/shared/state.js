@@ -93,7 +93,7 @@ export function State(hist) {
             Object.assign(this, {google, map, centerMarker});
         }),
 
-        initLocs: action(locs => {
+        setLocs: action(locs => {
             this.rawLocs = locs;
         }),
 
