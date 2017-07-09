@@ -39,6 +39,7 @@ function initClient() {
                 center: CENTER,
                 zoom: DEFAULT_ZOOM,
                 draggableCursor: "default",
+                disableDoubleClickZoom: true,
                 styles: [
                     {
                         featureType: "poi",
