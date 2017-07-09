@@ -9,12 +9,12 @@ import App from "../shared/components/app";
 import Overlay from "../shared/components/overlay";
 import {CENTER, DEFAULT_ZOOM} from "../shared/consts";
 import {createRoutes} from "../shared/routes";
-import {createState} from "../shared/state";
+import {State} from "../shared/state";
 import {loadGoogleMaps} from "../shared/google-maps";
 
 function initClient() {
     let hist = createHistory();
-    let state = createState(hist);
+    let state = new State(hist);
     let router = createRoutes(state);
 
     state.loadState(JSON.parse(localStorage.getItem("state")));
