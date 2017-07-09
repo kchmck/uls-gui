@@ -146,7 +146,7 @@ const FilterInput = observer(({id, disp=defaultDisp, proc=defaultProc}, {s}) => 
         id,
         type: "text",
         value: disp(s.editFilters[id]),
-        onChange: onFilterChange(id, s.changeFilter.bind(s), proc),
+        onChange: onFilterChange(id, s.changeFilter, proc),
     })
 ));
 

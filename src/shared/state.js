@@ -20,18 +20,18 @@ export function State(hist) {
         centerMarker: null,
 
         rawLocs: [],
-        jitterLocs: computed(function() {
+        jitterLocs: computed(() => {
             return this.rawLocs.map(loc => Object.assign(loc, {
                 jitterLat: (Math.random() - 0.5) * 10.0e-3,
                 jitterLng: (Math.random() - 0.5) * 10.0e-3,
             }));
         }),
-        distLocs: computed(function() {
+        distLocs: computed(() => {
             return this.jitterLocs.map(loc => Object.assign(loc, {
                 dist: calcDist(CENTER, loc),
             })).filter(loc => loc.dist < CUTOFF_DIST);
         }),
-        freqLocs: computed(function() {
+        freqLocs: computed(() => {
             let {freqLower, freqUpper, rxPowerLower} = this.filters;
 
             return this.distLocs.map(loc => Object.assign({}, loc, {
@@ -47,7 +47,7 @@ export function State(hist) {
                 )),
             })).filter(loc => loc.freqs.length > 0);
         }),
-        locs: computed(function() {
+        locs: computed(() => {
             let {vis} = this.filters;
             let calcVis = createVisCalc(this.locCat, this.notes);
 
@@ -85,19 +85,19 @@ export function State(hist) {
 
         search: new SearchFormState(),
 
-        setError: action(function(err) {
+        setError: action(err => {
             this.curError = err;
         }),
 
-        initMap: action(function(google, map, centerMarker) {
+        initMap: action((google, map, centerMarker) => {
             Object.assign(this, {google, map, centerMarker});
         }),
 
-        initLocs: action(function(locs) {
+        initLocs: action(locs => {
             this.rawLocs = locs;
         }),
 
-        selectLoc: action(function(lkey) {
+        selectLoc: action(lkey => {
             let idx = this.locs.findIndex(loc => loc.lkey === lkey);
 
             if (idx < 0) {
@@ -107,11 +107,11 @@ export function State(hist) {
             this.curLoc = this.locs[idx];
         }),
 
-        setTab: action(function(tab) {
+        setTab: action(tab => {
             this.curTab = tab;
         }),
 
-        setFilters: action(function(args) {
+        setFilters: action(args => {
             let freqLower = parseFloat(args.freqLower);
             let freqUpper = parseFloat(args.freqUpper);
             let rxPowerLower = parseFloat(args.rxPowerLower);
@@ -127,7 +127,7 @@ export function State(hist) {
             this.editFilters = Object.assign({}, this.filters);
         }),
 
-        changeFilter: action(function(filter, value) {
+        changeFilter: action((filter, value) => {
             if (isNaN(value)) {
                 return this;
             }
@@ -135,60 +135,60 @@ export function State(hist) {
             this.editFilters[filter] = value;
         }),
 
-        toggleFilterVis: action(function(visFlag) {
+        toggleFilterVis: action(visFlag => {
             this.editFilters.vis ^= visFlag;
         }),
 
-        setProjection: action(function(projection) {
+        setProjection: action(projection => {
             this.projection = Object.create(projection);
         }),
 
-        setCenter: action(function(loc) {
+        setCenter: action(loc => {
             if (this.map) {
                 this.map.setCenter(loc);
             }
         }),
 
-        setCurCenter: action(function() {
+        setCurCenter: action(() => {
             this.saveCenter();
             this.setCenter(this.curLoc);
         }),
 
-        setPreviewLoc: action(function(loc) {
+        setPreviewLoc: action(loc => {
             this.previewLoc = loc;
         }),
 
-        resetPreviewLoc: action(function() {
+        resetPreviewLoc: action(() => {
             this.setPreviewLoc(null);
         }),
 
-        setDocTitle: action(function(title) {
+        setDocTitle: action(title => {
             this.docTitle = title;
         }),
 
-        toggleCat: action(function(lkey, cat) {
+        toggleCat: action((lkey, cat) => {
             this.locCat.set(lkey, (this.locCat.get(lkey) & cat) ^ cat);
         }),
 
-        startEditNotes: action(function(lkey) {
+        startEditNotes: action(lkey => {
             this.editingNotes = true;
             this.editNotes = this.notes.get(lkey);
         }),
 
-        changeNotes: action(function(notes) {
+        changeNotes: action(notes => {
             this.editNotes = notes;
         }),
 
-        discardNotes: action(function() {
+        discardNotes: action(() => {
             this.editingNotes = false;
         }),
 
-        commitNotes: action(function(lkey) {
+        commitNotes: action(lkey => {
             this.notes.set(lkey, this.editNotes);
             this.editingNotes = false;
         }),
 
-        loadState: action(function(state) {
+        loadState: action(state => {
             if (!state) {
                 return;
             }
@@ -197,13 +197,13 @@ export function State(hist) {
             this.notes.merge(state.notes || {});
         }),
 
-        commitFilters: action(function() {
+        commitFilters: action(() => {
             hist.push(Object.assign({}, hist.location, {
                 search: `?${qs.stringify(this.editFilters)}`
             }));
         }),
 
-        searchLocs: computed(function() {
+        searchLocs: computed(() => {
             if (isNaN(this.search.committedFreq)) {
                 return [];
             }
@@ -217,7 +217,7 @@ export function State(hist) {
             })).filter(loc => loc.freqs.length > 0);
         }),
 
-        enterPreview: action(function(loc) {
+        enterPreview: action(loc => {
             // Only save center when initially entering preview.
             if (this.exitPreviewTimer === null) {
                 this.saveCenter();
@@ -230,18 +230,18 @@ export function State(hist) {
             this.setPreviewLoc(loc);
         }),
 
-        exitPreview: action(function(delay) {
+        exitPreview: action(delay => {
             this.exitPreviewTimer = setTimeout(() => {
                 this.restoreCenter();
                 this.resetPreviewLoc();
             }, delay);
         }),
 
-        saveCenter: action(function() {
+        saveCenter: action(() => {
             this.savedCenter = this.map.getCenter();
         }),
 
-        restoreCenter: action(function() {
+        restoreCenter: action(() => {
             this.map.setCenter(this.savedCenter);
         }),
     });
