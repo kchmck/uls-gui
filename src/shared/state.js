@@ -14,12 +14,11 @@ import {
 const calcPathLoss = createPathLossCalc(3.0);
 
 export function State(hist) {
-    extendObservable(this, {
-        google: null,
-        map: null,
+    let map = new MapState();
 
-        basePos: null,
-        baseMarker: observable.ref(null),
+    extendObservable(this, {
+        map,
+
 
         rawLocs: [],
         jitterLocs: computed(() => {
@@ -66,7 +65,6 @@ export function State(hist) {
 
         previewLoc: null,
         exitPreviewTimer: null,
-        savedCenter: null,
 
         filters: {
             freqLower: 0,
@@ -76,7 +74,6 @@ export function State(hist) {
         },
         editFilters: {},
         curTab: "info",
-        projection: null,
         docTitle: "",
         locCat: observable.map(),
         notes: observable.map(),
@@ -89,24 +86,6 @@ export function State(hist) {
 
         setError: action(err => {
             this.curError = err;
-        }),
-
-        initMap: action((google, map) => {
-            if (this.google !== null) {
-                throw new Error("map already initialized");
-            }
-
-            Object.assign(this, {google, map});
-
-            this.baseMarker = new google.maps.Marker({map});
-
-            autorun(() => {
-                this.baseMarker.setPosition(this.basePos);
-            });
-        }),
-
-        setBasePos: action(pos => {
-            this.basePos = pos;
         }),
 
         setLocs: action(locs => {
@@ -155,19 +134,9 @@ export function State(hist) {
             this.editFilters.vis ^= visFlag;
         }),
 
-        setProjection: action(projection => {
-            this.projection = Object.create(projection);
-        }),
-
-        setCenter: action(loc => {
-            if (this.map) {
-                this.map.setCenter(loc);
-            }
-        }),
-
         setCurCenter: action(() => {
-            this.saveCenter();
-            this.setCenter(this.curLoc);
+            this.map.saveCenter();
+            this.map.setCenter(this.curLoc);
         }),
 
         setPreviewLoc: action(loc => {
@@ -236,29 +205,21 @@ export function State(hist) {
         enterPreview: action(loc => {
             // Only save center when initially entering preview.
             if (this.exitPreviewTimer === null) {
-                this.saveCenter();
+                this.map.saveCenter();
             }
 
             clearTimeout(this.exitPreviewTimer);
             this.exitPreviewTimer = null;
 
-            this.setCenter(loc);
+            this.map.setCenter(loc);
             this.setPreviewLoc(loc);
         }),
 
         exitPreview: action(delay => {
             this.exitPreviewTimer = setTimeout(() => {
-                this.restoreCenter();
+                this.map.restoreCenter();
                 this.resetPreviewLoc();
             }, delay);
-        }),
-
-        saveCenter: action(() => {
-            this.savedCenter = this.map.getCenter();
-        }),
-
-        restoreCenter: action(() => {
-            this.map.setCenter(this.savedCenter);
         }),
     });
 }
@@ -279,5 +240,52 @@ function SearchFormState() {
             return Number.isNaN(this.parsedFreq);
         }),
         committedFreq: NaN,
+    });
+}
+
+function MapState() {
+    extendObservable(this, {
+        google: null,
+        map: null,
+        basePos: null,
+        projection: null,
+        baseMarker: null,
+        savedCenter: null,
+
+        init: action((google, map, basePos) => {
+            if (this.google !== null) {
+                throw new Error("map already initialized");
+            }
+
+            Object.assign(this, {google, map, basePos,
+                baseMarker: new google.maps.Marker({map}),
+            });
+
+            autorun(() => {
+                this.baseMarker.setPosition(this.basePos);
+            });
+        }),
+
+        setBasePos: action(pos => {
+            this.basePos = pos;
+        }),
+
+        setProjection: action(projection => {
+            this.projection = Object.create(projection);
+        }),
+
+        setCenter: action(loc => {
+            if (this.map) {
+                this.map.setCenter(loc);
+            }
+        }),
+
+        saveCenter: action(() => {
+            this.savedCenter = this.map.getCenter();
+        }),
+
+        restoreCenter: action(() => {
+            this.map.setCenter(this.savedCenter);
+        }),
     });
 }

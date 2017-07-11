@@ -18,7 +18,6 @@ function initClient() {
     let router = createRoutes(state);
 
     state.loadState(JSON.parse(localStorage.getItem("state")));
-    state.setBasePos(CENTER);
 
     autorun(function() {
         let {locCat, notes} = state;
@@ -61,13 +60,13 @@ function initClient() {
                         this.getPanes().overlayMouseTarget);
                 },
                 draw() {
-                    state.setProjection(this.getProjection());
+                    state.map.setProjection(this.getProjection());
                 },
             });
 
             overlay.setMap(map);
 
-            state.initMap(google, map);
+            state.map.init(google, map, CENTER);
         }),
         axios.get("/api/records").then(({data}) => {
             state.setLocs(data);

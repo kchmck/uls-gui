@@ -72,7 +72,7 @@ const ProjMarkers = ({proj}) => h("div", null,
     ] : null
 );
 
-const AllMarkers = observer((_, {s}) => h(ProjMarkers, {proj: s.projection}));
+const AllMarkers = observer((_, {s}) => h(ProjMarkers, {proj: s.map.projection}));
 
 const Overlay = (s, hist) => h(createContext({s, hist}), null, h(AllMarkers));
 
