@@ -85,7 +85,7 @@ export function State(hist) {
 
         changeFilter: action((filter, value) => {
             if (isNaN(value)) {
-                return this;
+                return;
             }
 
             this.editFilters[filter] = value;
