@@ -40,9 +40,6 @@ export function State(hist) {
         curTab: "info",
         docTitle: "",
         locCat: observable.map(),
-        notes: observable.map(),
-        editNotes: "",
-        editingNotes: false,
 
         curError: null,
 
@@ -119,31 +116,12 @@ export function State(hist) {
             this.locCat.set(lkey, (this.locCat.get(lkey) & cat) ^ cat);
         }),
 
-        startEditNotes: action(lkey => {
-            this.editingNotes = true;
-            this.editNotes = this.notes.get(lkey);
-        }),
-
-        changeNotes: action(notes => {
-            this.editNotes = notes;
-        }),
-
-        discardNotes: action(() => {
-            this.editingNotes = false;
-        }),
-
-        commitNotes: action(lkey => {
-            this.notes.set(lkey, this.editNotes);
-            this.editingNotes = false;
-        }),
-
         loadState: action(state => {
             if (!state) {
                 return;
             }
 
             this.locCat.merge(state.locCat || {});
-            this.notes.merge(state.notes || {});
         }),
 
         commitFilters: action(() => {
@@ -219,7 +197,7 @@ export function State(hist) {
 
     autorun(() => {
         let {vis} = this.filters;
-        let calcVis = createVisCalc(this.locCat, this.notes);
+        let calcVis = createVisCalc(this.locCat);
 
         this.locs = this.freqLocs.map(loc => Object.assign(loc, {
             vis: calcVis(loc.lkey),

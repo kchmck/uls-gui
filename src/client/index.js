@@ -20,8 +20,8 @@ function initClient() {
     state.loadState(JSON.parse(localStorage.getItem("state")));
 
     autorun(function() {
-        let {locCat, notes} = state;
-        localStorage.setItem("state", JSON.stringify({locCat, notes}));
+        let {locCat} = state;
+        localStorage.setItem("state", JSON.stringify({locCat}));
     });
 
     autorun(function() {

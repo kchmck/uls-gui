@@ -1,6 +1,5 @@
 import classNames from "classnames";
 import h from "inferno-hyperscript";
-import marked from "marked";
 import {observer} from "inferno-mobx";
 
 import {Link} from "./link";
@@ -59,50 +58,12 @@ const LocControls = ({lkey}, {s}) => h("div#controls", null,
     ])
 );
 
-const NotesText = ({notes}) => h("div", {
-    dangerouslySetInnerHTML: {__html: marked(notes)}
-});
-
-const NoNotes = () => h("p", null, h("em", null, "No notes recorded"));
-
-const MaybeShowNotes = ({notes}) => h("div#noteText", null,
-    notes ? h(NotesText, {notes}) : h(NoNotes));
-
-const EditNotes = observer(({lkey}, {s}) => h("div", null, [
-    h("fieldset.form-group", null, [
-        h("label.sr-only", {htmlFor: "editNotes"}, "Enter location notes"),
-        h("textarea#editNotes.form-control", {
-            rows: 3,
-            value: s.editNotes,
-            autoFocus: true,
-            onChange: e => s.changeNotes(e.target.value),
-        }),
-    ]),
-    h("fieldset.btn-group.btn-group-sm", null, [
-        h("button.btn.btn-primary", {onClick: () => s.commitNotes(lkey)},
-            [h(Icon, {name: "floppy-o"}), " Save"]),
-        h("button.btn.btn-secondary", {onClick: () => s.discardNotes()}, "Cancel")
-    ]),
-]));
-
-const ShowNotes = observer(({lkey}, {s}) => h("div", null, [
-    h(MaybeShowNotes, {notes: s.notes.get(lkey)}),
-    h("fieldset.form-group", null, h("button.btn.btn-secondary.btn-sm", {
-        onClick: () => s.startEditNotes(lkey),
-    }, [h("span.fa.fa-pencil"), " Edit"]))
-]));
-
-const Notes = observer(({lkey}, {s}) => h("div#notes", null,
-    s.editingNotes ? h(EditNotes, {lkey}) : h(ShowNotes, {lkey})));
-
 const LocHeading = ({rkey, lkey, callsign, desc, elig}) => h("div", null, [
     h("h1.callsign", null, h("a", {href: locUrl(rkey, lkey)}, callsign)),
     h("p.desc", null, desc),
     h(LocControls, {lkey}),
     h("h2", null, "Eligibility"),
     h(MaybeElig, {elig}),
-    h("h2", null, "Notes"),
-    h(Notes, {lkey}),
 ]);
 
 const MaybeElig = ({elig}) => h("p", null,
@@ -195,8 +156,6 @@ const Filters = (_, {s}) => (
                     h(Icon, {name: "eye"})),
                 h(FilterVisibility, {visFlag: VIS.CONFIRMED, title: "Confirmed"},
                     h(Icon, {name: "check"})),
-                h(FilterVisibility, {visFlag: VIS.ANNOTATED, title: "Annotated"},
-                    h(Icon, {name: "pencil"})),
             ]),
         ]),
         h("button.btn.btn-primary", {type: "submit"}, "Filter"),

@@ -32,7 +32,6 @@ export const createRoutes = state => {
 
                 state.selectLoc(lkey);
                 state.resetPreviewLoc();
-                state.discardNotes();
             }
         ))
         .addRoute("/search", withTitle("Search", () => state.setTab("search")));
