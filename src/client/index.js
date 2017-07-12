@@ -21,8 +21,14 @@ function initClient() {
 
     autorun(function() {
         let {locCat} = state;
-        localStorage.setItem("state", JSON.stringify({locCat}));
+        let {basePos} = state.map;
+
+        localStorage.setItem("state", JSON.stringify({locCat, basePos}));
     });
+
+    if (state.map.basePos === null) {
+        state.map.setBasePos(CENTER);
+    }
 
     autorun(function() {
         document.title = state.docTitle;
@@ -66,7 +72,7 @@ function initClient() {
 
             overlay.setMap(map);
 
-            state.map.init(google, map, CENTER);
+            state.map.init(google, map);
         }),
         axios.get("/api/records").then(({data}) => {
             state.setLocs(data);

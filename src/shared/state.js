@@ -122,6 +122,10 @@ export function State(hist) {
             }
 
             this.locCat.merge(state.locCat || {});
+
+            if (state.basePos) {
+                this.map.basePos = state.basePos;
+            }
         }),
 
         commitFilters: action(() => {
@@ -237,15 +241,15 @@ function MapState() {
         baseMarker: null,
         savedCenter: null,
 
-        init: action((google, map, basePos) => {
+        init: action((google, map) => {
             if (this.google !== null) {
                 throw new Error("map already initialized");
             }
 
-            Object.assign(this, {google, map, basePos,
+            Object.assign(this, {google, map,
                 baseMarker: new google.maps.Marker({
                     map,
-                    position: basePos,
+                    position: this.basePos,
                     draggable: true,
                 }),
             });
@@ -258,6 +262,10 @@ function MapState() {
                     lng: pos.lng(),
                 };
             });
+        }),
+
+        setBasePos: action(basePos => {
+            this.basePos = basePos;
         }),
 
         setProjection: action(projection => {
