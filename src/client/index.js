@@ -42,7 +42,7 @@ function initClient() {
             version: "3.29",
         }).then(google => {
             let map = new google.maps.Map(document.getElementById("map"), {
-                center: CENTER,
+                center: state.map.basePos,
                 zoom: DEFAULT_ZOOM,
                 draggableCursor: "default",
                 disableDoubleClickZoom: true,
