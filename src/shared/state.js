@@ -1,7 +1,7 @@
 import qs from "query-string";
 import {autorun, observable, computed, action, extendObservable} from "mobx";
 
-import {CENTER, CUTOFF_DIST, SEARCH_OFFSET} from "./consts";
+import {CUTOFF_DIST, SEARCH_OFFSET} from "./consts";
 import {VIS, createVisCalc} from "./visibility";
 
 import {
@@ -19,47 +19,11 @@ export function State(hist) {
     extendObservable(this, {
         map,
 
-
-        rawLocs: [],
-        jitterLocs: computed(() => {
-            return this.rawLocs.map(loc => Object.assign(loc, {
-                jitterLat: (Math.random() - 0.5) * 10.0e-3,
-                jitterLng: (Math.random() - 0.5) * 10.0e-3,
-            }));
-        }),
-        distLocs: computed(() => {
-            return this.jitterLocs.map(loc => Object.assign(loc, {
-                dist: calcDist(CENTER, loc),
-            })).filter(loc => loc.dist < CUTOFF_DIST);
-        }),
-        freqLocs: computed(() => {
-            let {freqLower, freqUpper, rxPowerLower} = this.filters;
-
-            return this.distLocs.map(loc => Object.assign({}, loc, {
-                freqs: loc.freqs.filter(f => (
-                    f.freq > freqLower && f.freq < freqUpper
-                )).map(f => Object.assign(f, {
-                    rxPower: calcRxPower(milliWattToDbm(f.power),
-                                         calcPathLoss(f.freq, loc.dist)),
-                })).filter(f => (
-                    f.rxPower > rxPowerLower
-                )).sort((a, b) => (
-                    b.rxPower - a.rxPower
-                )),
-            })).filter(loc => loc.freqs.length > 0);
-        }),
-        locs: computed(() => {
-            let {vis} = this.filters;
-            let calcVis = createVisCalc(this.locCat, this.notes);
-
-            return this.freqLocs.map(loc => Object.assign(loc, {
-                vis: calcVis(loc.lkey),
-            })).filter(loc => (
-                (loc.vis & vis) !== 0
-            )).sort((a, b) => (
-                b.freqs[0].rxPower - a.freqs[0].rxPower
-            ));
-        }),
+        rawLocs: observable.ref([]),
+        jitterLocs: observable.ref([]),
+        distLocs: observable.ref([]),
+        freqLocs: observable.ref([]),
+        locs: observable.ref([]),
 
         curLoc: null,
 
@@ -222,6 +186,49 @@ export function State(hist) {
             }, delay);
         }),
     });
+
+    autorun(() => {
+        this.jitterLocs = this.rawLocs.map(loc => Object.assign(loc, {
+            jitterLat: (Math.random() - 0.5) * 10.0e-3,
+            jitterLng: (Math.random() - 0.5) * 10.0e-3,
+        }));
+    });
+
+    autorun(() => {
+        this.distLocs = this.jitterLocs.map(loc => Object.assign(loc, {
+            dist: calcDist(map.basePos, loc),
+        })).filter(loc => loc.dist < CUTOFF_DIST);
+    });
+
+    autorun(() => {
+        let {freqLower, freqUpper, rxPowerLower} = this.filters;
+
+        this.freqLocs = this.distLocs.map(loc => Object.assign({}, loc, {
+            freqs: loc.freqs.filter(f => (
+                f.freq > freqLower && f.freq < freqUpper
+            )).map(f => Object.assign(f, {
+                rxPower: calcRxPower(milliWattToDbm(f.power),
+                                     calcPathLoss(f.freq, loc.dist)),
+            })).filter(f => (
+                f.rxPower > rxPowerLower
+            )).sort((a, b) => (
+                b.rxPower - a.rxPower
+            )),
+        })).filter(loc => loc.freqs.length > 0);
+    });
+
+    autorun(() => {
+        let {vis} = this.filters;
+        let calcVis = createVisCalc(this.locCat, this.notes);
+
+        this.locs = this.freqLocs.map(loc => Object.assign(loc, {
+            vis: calcVis(loc.lkey),
+        })).filter(loc => (
+            (loc.vis & vis) !== 0
+        )).sort((a, b) => (
+            b.freqs[0].rxPower - a.freqs[0].rxPower
+        ));
+    });
 }
 
 function SearchFormState() {
@@ -258,16 +265,21 @@ function MapState() {
             }
 
             Object.assign(this, {google, map, basePos,
-                baseMarker: new google.maps.Marker({map}),
+                baseMarker: new google.maps.Marker({
+                    map,
+                    position: basePos,
+                    draggable: true,
+                }),
             });
 
-            autorun(() => {
-                this.baseMarker.setPosition(this.basePos);
-            });
-        }),
+            this.baseMarker.addListener("dragend", () => {
+                let pos = this.baseMarker.getPosition();
 
-        setBasePos: action(pos => {
-            this.basePos = pos;
+                this.basePos = {
+                    lat: pos.lat(),
+                    lng: pos.lng(),
+                };
+            });
         }),
 
         setProjection: action(projection => {
