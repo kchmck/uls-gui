@@ -154,6 +154,14 @@ export function createDebounce(delay) {
     };
 }
 
+export function computeMedianLoc(locs) {
+    let half = Math.floor(locs.length / 2);
+    let lat = locs.map(loc => loc.lat).sort()[half];
+    let lng = locs.map(loc => loc.lng).sort()[half];
+
+    return {lat, lng};
+}
+
 if (process.env.NODE_ENV === "test") {
     let {assert} = require("chai");
 
