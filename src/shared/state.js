@@ -236,7 +236,7 @@ function MapState() {
     extendObservable(this, {
         google: null,
         map: null,
-        basePos: null,
+        basePos: observable.ref(null),
         projection: null,
         baseMarker: null,
         savedCenter: null,
