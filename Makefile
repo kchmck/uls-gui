@@ -17,9 +17,6 @@ static/css/%.css: styles/%.scss
 
 static/js/app.js: $(LIB)
 
-static/fonts: vendor/Font-Awesome/fonts
-	cp -rT $< $@
-
 build: $(LIB)
 
 test:
@@ -28,7 +25,7 @@ test:
 lint:
 	eslint src
 
-build-web: static/js/app.js static/css/app.css static/fonts
+build-web: static/js/app.js static/css/app.css
 
 dev-serve: lib/server/index.js
 	nodemon -w views -w static -e hbs,js $< -- $(SERVE_FLAGS)
