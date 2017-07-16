@@ -37,9 +37,10 @@ export function State(hist) {
             vis: VIS.DEFAULT,
         },
         editFilters: {},
+        locCat: observable.map(),
+
         curTab: "info",
         docTitle: "",
-        locCat: observable.map(),
 
         curError: null,
 
