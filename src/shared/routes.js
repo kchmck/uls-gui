@@ -1,6 +1,8 @@
 import createRouter from "@kchmck/simple-router";
 import qs from "query-string";
 
+import {InvalidLocError} from "./error";
+
 export const createRoutes = state => {
     function withTitle(title, fn) {
         let titleFn = typeof title === "function" ? title : () => title;
@@ -27,7 +29,7 @@ export const createRoutes = state => {
                 let lkey = parseInt(id, 10);
 
                 if (isNaN(lkey)) {
-                    throw new Error("malformed location key");
+                    return state.setError(InvalidLocError);
                 }
 
                 state.selectLoc(lkey);

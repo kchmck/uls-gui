@@ -1,6 +1,7 @@
 import qs from "query-string";
 import {autorun, observable, computed, action, extendObservable} from "mobx";
 
+import * as error from "./error";
 import {CUTOFF_DIST, SEARCH_OFFSET} from "./consts";
 import {VIS, createVisCalc} from "./visibility";
 
@@ -58,7 +59,7 @@ export function State(hist) {
             let idx = this.locs.findIndex(loc => loc.lkey === lkey);
 
             if (idx < 0) {
-                throw new Error("location not visible");
+                return this.setError(error.UnknownLocError);
             }
 
             this.curLoc = this.locs[idx];
@@ -246,7 +247,7 @@ function MapState() {
 
         init: action((google, map) => {
             if (this.google !== null) {
-                throw new Error("map already initialized");
+                return this.setError(error.MapInitError);
             }
 
             let baseMarker = new google.maps.Marker({
