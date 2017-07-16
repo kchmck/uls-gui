@@ -15,6 +15,7 @@ if (process.env.NODE_ENV == "production") {
 
 module.exports = {
     entry: "./lib/client/index",
+    target: "web",
     resolve: {
         extensions: [".js"],
     },
