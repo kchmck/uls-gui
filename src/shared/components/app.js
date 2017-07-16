@@ -97,10 +97,11 @@ const Info = ({loc}) => h("div", null, [
     h(Freqs, {loc}),
 ]);
 
-const NoInfo = () => h("p", null, h("em", null, "No location selected"));
-
 const MaybeInfo = observer((_, {s}) => h("div#info.pane", null,
-    s.curLoc ? h(Info, {loc: s.curLoc}) : h(NoInfo)));
+    s.curLoc ?
+        h(Info, {loc: s.curLoc}) :
+        h("p", null, h("em", null, "No location selected"))
+));
 
 const FilterInput = observer(({id, disp=defaultDisp, proc=defaultProc}, {s}) => (
     h("input.form-control", {
@@ -211,10 +212,8 @@ const MaybeList = ({locs}, {s}) => (
         locHover: loc => s.enterPreview(loc),
         locLeave: () => s.exitPreview(300),
     }) :
-    h(NoList)
+    h("p", null, "No locations found")
 );
-
-const NoList = () => h("p", null, "No locations found");
 
 const List = ({locs, locHover, locLeave}) => h("div", null, [
     h("p", null, `${locs.length} locations`),
