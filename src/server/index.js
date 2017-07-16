@@ -104,7 +104,7 @@ function createRecordFetcher(db) {
                         lkey: lkey,
                         callsign: row.callsign,
                         desc: row.title.slice(csIdx + dashIdx + 2),
-                        elig: (row.eligibility || "").toUpperCase(),
+                        elig: row.eligibility || "",
                         lat: row.latitude,
                         lng: row.longitude,
                         freqs: [],
