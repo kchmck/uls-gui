@@ -7,6 +7,7 @@ var plugins = [
         NODE_ENV: "development",
         MAPS_API_KEY: null
     }),
+    new webpack.optimize.ModuleConcatenationPlugin(),
 ];
 
 if (process.env.NODE_ENV == "production") {
