@@ -216,9 +216,13 @@ const MaybeList = ({locs}, {s}) => (
 
 const NoList = () => h("p", null, "No locations found");
 
-const List = ({locs, locHover, locLeave}) => h("ul.locList", null, [
+const List = ({locs, locHover, locLeave}) => h("div", null, [
     h("p", null, `${locs.length} locations`),
-    h("div", null, locs.map(loc => h("li", {
+    h(LocList, {locs, locHover, locLeave}),
+]);
+
+const LocList = ({locs, locHover, locLeave}) => (
+    h("ul.locList", null, locs.map(loc => h("li", {
         onMouseEnter: () => locHover(loc),
         onMouseLeave: locLeave,
     }, [
@@ -226,7 +230,7 @@ const List = ({locs, locHover, locLeave}) => h("ul.locList", null, [
         h("p.desc", null, `${loc.desc}`),
         h("p", null, loc.freqs.map(f => dispFreq(f.freq)).join(", ")),
     ])))
-]);
+);
 
 const MaybeVisible = ({hidden, children}) => h("div", {
     className: classNames({hidden})
