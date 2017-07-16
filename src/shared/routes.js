@@ -23,18 +23,15 @@ export const createRoutes = state => {
         .addRoute("/list", withTitle("List", () => state.setTab("list")))
         .addCommon("/info/:param*", () => state.setTab("info"))
         .addRoute("/info/", () => {})
-        .addRoute("/info/:id", withTitle(
-            () => `${state.curLoc.callsign} - ${state.curLoc.desc}`,
-            id => {
-                let lkey = parseInt(id, 10);
+        .addRoute("/info/:id", id => {
+            let lkey = parseInt(id, 10);
 
-                if (isNaN(lkey)) {
-                    return state.setError(InvalidLocError);
-                }
-
-                state.selectLoc(lkey);
-                state.resetPreviewLoc();
+            if (isNaN(lkey)) {
+                return state.setError(InvalidLocError);
             }
-        ))
+
+            state.selectLoc(lkey);
+            state.resetPreviewLoc();
+        })
         .addRoute("/search", withTitle("Search", () => state.setTab("search")));
 };

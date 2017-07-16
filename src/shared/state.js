@@ -63,6 +63,7 @@ export function State(hist) {
             }
 
             this.curLoc = this.locs[idx];
+            this.setDocTitle(`${this.curLoc.callsign} - ${this.curLoc.desc}`);
         }),
 
         setTab: action(tab => {
