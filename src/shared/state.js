@@ -246,22 +246,22 @@ function MapState() {
                 throw new Error("map already initialized");
             }
 
-            Object.assign(this, {google, map,
-                baseMarker: new google.maps.Marker({
-                    map,
-                    position: this.basePos,
-                    draggable: true,
-                }),
+            let baseMarker = new google.maps.Marker({
+                map,
+                position: this.basePos,
+                draggable: true,
             });
 
-            this.baseMarker.addListener("dragend", () => {
+            baseMarker.addListener("dragend", () => {
                 let pos = this.baseMarker.getPosition();
 
-                this.basePos = {
+                this.setBasePos({
                     lat: pos.lat(),
                     lng: pos.lng(),
-                };
+                });
             });
+
+            Object.assign(this, {google, map, baseMarker});
         }),
 
         setBasePos: action(basePos => {
