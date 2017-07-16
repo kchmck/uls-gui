@@ -2121,6 +2121,14 @@ inferno-mobx@^3.6.4:
     inferno-shared "3.6.4"
     mobx "*"
 
+inferno-server@^3.6.4:
+  version "3.6.4"
+  resolved "https://registry.yarnpkg.com/inferno-server/-/inferno-server-3.6.4.tgz#54e35484a445bbb90a18ded4facb0e9ed5e7a58a"
+  dependencies:
+    inferno "3.6.4"
+    inferno-shared "3.6.4"
+    inferno-vnode-flags "3.6.4"
+
 inferno-shared@3.6.4:
   version "3.6.4"
   resolved "https://registry.yarnpkg.com/inferno-shared/-/inferno-shared-3.6.4.tgz#0a13e89ed45c527172d59747b31329487d5f3d7f"

@@ -1,5 +1,7 @@
 import "babel-polyfill";
 
+import InfernoServer from "inferno-server";
+import createMemoryHistory from "history/createMemoryHistory";
 import favicon from "koa-favicon";
 import handlebars from "koa-handlebars";
 import koa from "koa";
@@ -8,6 +10,10 @@ import route from "koa-route";
 import serve from "koa-static";
 import sqlite3 from "sqlite3";
 import {ArgumentParser} from "argparse";
+
+import App from  "../shared/components/app";
+import {State} from "../shared/state";
+import {createRoutes} from "../shared/routes";
 
 function initServer() {
     let args = (function() {
@@ -33,7 +39,16 @@ function initServer() {
     app.use(route.get("/api/records", createRecordFetcher(db)));
 
     app.use(function*() {
-        yield this.render("index", {});
+        let hist = createMemoryHistory();
+        let state = new State(hist);
+        let router = createRoutes(state);
+
+        hist.push(this.request.url);
+        router.handlePath(hist.location);
+
+        let sidebar = InfernoServer.renderToString(App(state, hist));
+
+        yield this.render("index", {state, sidebar});
     });
 
     app.listen(3000);

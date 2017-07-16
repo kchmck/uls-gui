@@ -22,7 +22,4 @@ lint:
 
 build-web: static/js/app.js static/css/app.css
 
-dev-serve: bin/server.js
-	nodemon -w views -e hbs,js $< -- $(SERVE_FLAGS)
-
-.PHONY: build test lint build-web dev-serve
+.PHONY: build test lint build-web

@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="initial-scale=1.0,width=device-width">
-        <title>Home</title>
+        <title>{{ state.docTitle }}</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" />
         <link rel="stylesheet"
             href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"
@@ -15,7 +15,7 @@
         <div id="map-container">
             <div id="map"></div>
         </div>
-        <div id="sidebar"></div>
+        <div id="sidebar">{{{ sidebar }}}</div>
         <script src="/static/js/app.js" async deferred></script>
     </body>
 </html>

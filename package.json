@@ -25,6 +25,7 @@
     "inferno-component": "^3.6.4",
     "inferno-hyperscript": "^3.6.4",
     "inferno-mobx": "^3.6.4",
+    "inferno-server": "^3.6.4",
     "koa": "^1.2.0",
     "koa-favicon": "^1.2.1",
     "koa-handlebars": "^1.0.0",
