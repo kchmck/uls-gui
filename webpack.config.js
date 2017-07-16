@@ -19,6 +19,26 @@ module.exports = {
     resolve: {
         extensions: [".js"],
     },
+    module: {
+        rules: [{
+            test: /\.js$/,
+            exclude: /node_modules/,
+            loader: "babel-loader",
+            options: {
+                cacheDirectory: true,
+                presets: [
+                    ["env", {
+                        targets: {
+                            browsers: "firefox >= 54",
+                        },
+                        useBuiltins: true,
+                        modules: false,
+                    }],
+                ],
+                plugins: ["transform-object-rest-spread"],
+            },
+        }],
+    },
     output: {
         path: path.resolve(__dirname, "static/js"),
         filename: "app.js",
