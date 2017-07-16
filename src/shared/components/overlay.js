@@ -28,7 +28,7 @@ function calcSat(dbm) {
 
 const Marker = ({loc, pos, active=false, preview=false, fadeIn=true}) => (
     h(Link, {
-        href: `/info/${loc.lkey}`,
+        mergePath: `/info/${loc.lkey}`,
         className: classNames("marker", {active, preview, fadeIn}),
         style: {
             background: calcBackground(loc.freqs[0].rxPower),

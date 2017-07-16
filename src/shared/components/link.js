@@ -5,7 +5,25 @@ export class Link extends Component {
     constructor(props, context) {
         super(props, context);
 
+        this.componentWillUpdate(props);
         this.onClick = this.onClick.bind(this);
+    }
+
+    createLoc({mergePath, href}) {
+        let {hist} = this.context;
+
+        if (mergePath !== undefined) {
+            let loc = Object.assign({}, hist.location);
+            loc.pathname = mergePath;
+
+            return loc;
+        }
+
+        if (href !== undefined) {
+            return {pathname: href};
+        }
+
+        throw new Error("no valid location form given");
     }
 
     onClick(e) {
@@ -28,25 +46,18 @@ export class Link extends Component {
             return;
         }
 
-        this.historyPush(el.pathname);
+        this.context.hist.push(this.loc);
 
         e.preventDefault();
     }
 
-    historyPush(newLoc) {
-        let loc = this.context.hist.location;
-
-        if (typeof newLoc === "string") {
-            loc.pathname = newLoc;
-        } else {
-            Object.assign(loc, newLoc);
-        }
-
-        this.context.hist.push(loc);
+    componentWillUpdate(newProps) {
+        this.loc = this.createLoc(newProps);
     }
 
     render() {
         return h("a", Object.assign(this.props, {
+            href: this.context.hist.createHref(this.loc),
             onClick: this.onClick,
         }));
     }

@@ -222,7 +222,7 @@ const List = ({locs, locHover, locLeave}) => h("ul.locList", null, [
         onMouseEnter: () => locHover(loc),
         onMouseLeave: locLeave,
     }, [
-        h("h1.callsign", null, h(Link, {href: `/info/${loc.lkey}`}, `${loc.callsign}`)),
+        h("h1.callsign", null, h(Link, {mergePath: `/info/${loc.lkey}`}, `${loc.callsign}`)),
         h("p.desc", null, `${loc.desc}`),
         h("p", null, loc.freqs.map(f => dispFreq(f.freq)).join(", ")),
     ])))
@@ -243,10 +243,10 @@ const Tab = ({active, ...props}) => h("li.nav-item", null,
     h(Link, Object.assign(props, {className: classNames("nav-link", {active})})));
 
 const SidebarTabs = observer((_, {s}) => h("nav", null, h("ul.nav.nav-tabs", [
-    h(Tab, {active: s.curTab === "info", href: "/info"}, "Info"),
-    h(Tab, {active: s.curTab === "list", href: "/list"}, "List"),
-    h(Tab, {active: s.curTab === "filters", href: "/filters"}, "Filters"),
-    h(Tab, {active: s.curTab === "search", href: "/search"}, "Search"),
+    h(Tab, {active: s.curTab === "info", mergePath: "/info"}, "Info"),
+    h(Tab, {active: s.curTab === "list", mergePath: "/list"}, "List"),
+    h(Tab, {active: s.curTab === "filters", mergePath: "/filters"}, "Filters"),
+    h(Tab, {active: s.curTab === "search", mergePath: "/search"}, "Search"),
 ])));
 
 const App = (s, hist) => h(createContext({s, hist}), null, h("main", null, [
