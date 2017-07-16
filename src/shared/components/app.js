@@ -140,9 +140,9 @@ const Filters = (_, {s}) => (
             ])
         ]),
         h("fieldset.form-group", null, [
-            h("label", {htmlFor: "rxPowerLower"}, "Receive power"),
+            h("label", {htmlFor: "rxPower"}, "Receive power"),
             h("div.input-group", null, [
-                h(FilterInput, {id: "rxPowerLower"}),
+                h(FilterInput, {id: "rxPower"}),
                 h("div.input-group-addon", null, "dBm"),
             ])
         ]),

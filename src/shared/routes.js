@@ -15,8 +15,8 @@ export const createRoutes = state => {
 
     return createRouter()
         .addCommon("/*", (_, loc) => {
-            let {freqLower, freqUpper, rxPowerLower, vis} = qs.parse(loc.search);
-            state.setFilters({freqLower, freqUpper, rxPowerLower, vis});
+            let {freqLower, freqUpper, rxPower, vis} = qs.parse(loc.search);
+            state.setFilters({freqLower, freqUpper, rxPower, vis});
         })
         .addRoute("/", withTitle("Home", () => {}))
         .addRoute("/filters", withTitle("Filters", () => state.setTab("filters")))

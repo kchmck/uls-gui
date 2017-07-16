@@ -34,7 +34,7 @@ export function State(hist) {
         filters: {
             freqLower: 0,
             freqUpper: 5000.0e6,
-            rxPowerLower: -121.0,
+            rxPower: -121.0,
             vis: VIS.DEFAULT,
         },
         editFilters: {},
@@ -73,13 +73,13 @@ export function State(hist) {
         setFilters: action(args => {
             let freqLower = parseFloat(args.freqLower);
             let freqUpper = parseFloat(args.freqUpper);
-            let rxPowerLower = parseFloat(args.rxPowerLower);
+            let rxPower = parseFloat(args.rxPower);
             let vis = parseInt(args.vis, 10);
 
             Object.assign(this.filters, {
                 freqLower: isNaN(freqLower) ? this.filters.freqLower : freqLower,
                 freqUpper: isNaN(freqUpper) ? this.filters.freqUpper : freqUpper,
-                rxPowerLower: isNaN(rxPowerLower) ? this.filters.rxPowerLower : rxPowerLower,
+                rxPower: isNaN(rxPower) ? this.filters.rxPower : rxPower,
                 vis: isNaN(vis) ? this.filters.vis : vis,
             });
 
@@ -186,7 +186,7 @@ export function State(hist) {
     });
 
     autorun(() => {
-        let {freqLower, freqUpper, rxPowerLower} = this.filters;
+        let {freqLower, freqUpper, rxPower} = this.filters;
 
         this.freqLocs = this.distLocs.map(loc => Object.assign({}, loc, {
             freqs: loc.freqs.filter(f => (
@@ -195,7 +195,7 @@ export function State(hist) {
                 rxPower: calcRxPower(milliWattToDbm(f.power),
                                      calcPathLoss(f.freq, loc.dist)),
             })).filter(f => (
-                f.rxPower > rxPowerLower
+                f.rxPower > rxPower
             )).sort((a, b) => (
                 b.rxPower - a.rxPower
             )),
