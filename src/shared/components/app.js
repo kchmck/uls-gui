@@ -4,7 +4,7 @@ import {observer} from "inferno-mobx";
 
 import {Link} from "./link";
 import {VIS} from "../visibility";
-import {createContext} from "./context";
+import {Provider} from "./context";
 import {locUrl, freqUrl} from "../urls";
 
 import {
@@ -249,7 +249,7 @@ const SidebarTabs = observer((_, {s}) => h("nav", null, h("ul.nav.nav-tabs", [
     h(Tab, {active: s.curTab === "search", mergePath: "/search"}, "Search"),
 ])));
 
-const App = (s, hist) => h(createContext({s, hist}), null, h("main", null, [
+const App = (s, hist) => h(Provider, {s, hist}, h("main", null, [
     h(SidebarTabs),
     h(SidebarPanes),
 ]));

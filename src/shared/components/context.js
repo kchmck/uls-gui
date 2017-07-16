@@ -1,15 +1,16 @@
 import Component from "inferno-component";
 
-export function createContext(defaultContext) {
-    class Provider extends Component {
-        render() {
-            return this.props.children;
-        }
-
-        getChildContext() {
-            return defaultContext;
-        }
+export class Provider extends Component {
+    constructor(props) {
+        super(props);
+        this.defaultContext = props;
     }
 
-    return Provider;
+    render() {
+        return this.props.children;
+    }
+
+    getChildContext() {
+        return this.defaultContext;
+    }
 }

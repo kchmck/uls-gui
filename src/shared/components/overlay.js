@@ -4,7 +4,7 @@ import {observer} from "inferno-mobx";
 import {sprintf} from "sprintf-js";
 
 import {Link} from "./link";
-import {createContext} from "./context";
+import {Provider} from "./context";
 import {hsvToRgb} from "../util";
 
 function calcPos(loc, proj) {
@@ -74,6 +74,6 @@ const ProjMarkers = ({proj}) => h("div", null,
 
 const AllMarkers = observer((_, {s}) => h(ProjMarkers, {proj: s.map.projection}));
 
-const Overlay = (s, hist) => h(createContext({s, hist}), null, h(AllMarkers));
+const Overlay = (s, hist) => h(Provider, {s, hist}, h(AllMarkers));
 
 export default Overlay;
