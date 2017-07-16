@@ -40,7 +40,7 @@ export function State(hist) {
         locCat: observable.map(),
 
         curTab: "info",
-        docTitle: "",
+        docTitle: null,
 
         curError: null,
 
@@ -110,7 +110,7 @@ export function State(hist) {
         }),
 
         setDocTitle: action(title => {
-            this.docTitle = title;
+            this.docTitle = `ULS Map | ${title}`;
         }),
 
         toggleCat: action((lkey, cat) => {
@@ -212,6 +212,8 @@ export function State(hist) {
             b.freqs[0].rxPower - a.freqs[0].rxPower
         ));
     });
+
+    this.setDocTitle("Initializing...");
 }
 
 function SearchFormState() {
