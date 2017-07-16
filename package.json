@@ -20,10 +20,10 @@
     "classnames": "^2.2.5",
     "eslint": "^4.1.0",
     "history": "^4.6.3",
-    "inferno": "^3.6.1",
-    "inferno-component": "^3.6.1",
-    "inferno-hyperscript": "^3.6.1",
-    "inferno-mobx": "^3.6.1",
+    "inferno": "^3.6.4",
+    "inferno-component": "^3.6.4",
+    "inferno-hyperscript": "^3.6.4",
+    "inferno-mobx": "^3.6.4",
     "koa": "^1.2.0",
     "koa-favicon": "^1.2.1",
     "koa-handlebars": "^1.0.0",
@@ -38,6 +38,6 @@
     "sprintf-js": "^1.0.3",
     "sqlite3": "^3.1.4",
     "uglify-es-webpack-plugin": "^0.0.2",
-    "webpack": "^3.0.0"
+    "webpack": "^3.2.0"
   }
 }

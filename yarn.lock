@@ -1455,7 +1455,7 @@ end-of-stream@1.0.0:
   dependencies:
     once "~1.3.0"
 
-enhanced-resolve@^3.0.0:
+enhanced-resolve@^3.3.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/enhanced-resolve/-/enhanced-resolve-3.3.0.tgz#950964ecc7f0332a42321b673b38dc8ff15535b3"
   dependencies:
@@ -2130,64 +2130,64 @@ indexof@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/indexof/-/indexof-0.0.1.tgz#82dc336d232b9062179d05ab3293a66059fd435d"
 
-inferno-component@3.6.3, inferno-component@^3.6.1:
-  version "3.6.3"
-  resolved "https://registry.yarnpkg.com/inferno-component/-/inferno-component-3.6.3.tgz#f6d4459b524853eae7c58f15184ba7838fb2d55e"
+inferno-component@3.6.4, inferno-component@^3.6.4:
+  version "3.6.4"
+  resolved "https://registry.yarnpkg.com/inferno-component/-/inferno-component-3.6.4.tgz#8645383bac1965559a37d493e142295ac11731e7"
   dependencies:
-    inferno "3.6.3"
-    inferno-shared "3.6.3"
-    inferno-vnode-flags "3.6.3"
+    inferno "3.6.4"
+    inferno-shared "3.6.4"
+    inferno-vnode-flags "3.6.4"
 
-inferno-create-class@3.6.3:
-  version "3.6.3"
-  resolved "https://registry.yarnpkg.com/inferno-create-class/-/inferno-create-class-3.6.3.tgz#e058b11efe735e63fd2fc560d8578ffe90409eca"
+inferno-create-class@3.6.4:
+  version "3.6.4"
+  resolved "https://registry.yarnpkg.com/inferno-create-class/-/inferno-create-class-3.6.4.tgz#f9ce54353c17df8fa0c2ecce883e6f3377aa894f"
   dependencies:
-    inferno-component "3.6.3"
-    inferno-shared "3.6.3"
+    inferno-component "3.6.4"
+    inferno-shared "3.6.4"
 
-inferno-create-element@3.6.3:
-  version "3.6.3"
-  resolved "https://registry.yarnpkg.com/inferno-create-element/-/inferno-create-element-3.6.3.tgz#56c02934e610cb6c119a79d690fc5673ff8f5dd1"
+inferno-create-element@3.6.4:
+  version "3.6.4"
+  resolved "https://registry.yarnpkg.com/inferno-create-element/-/inferno-create-element-3.6.4.tgz#8f53d5c7e5a74fbac0c3dac3f3eb3826fb862e96"
   dependencies:
-    inferno "3.6.3"
-    inferno-component "3.6.3"
-    inferno-shared "3.6.3"
-    inferno-vnode-flags "3.6.3"
+    inferno "3.6.4"
+    inferno-component "3.6.4"
+    inferno-shared "3.6.4"
+    inferno-vnode-flags "3.6.4"
 
-inferno-hyperscript@^3.6.1:
-  version "3.6.3"
-  resolved "https://registry.yarnpkg.com/inferno-hyperscript/-/inferno-hyperscript-3.6.3.tgz#dd3930350793472174970d9c66ec553193b2dde0"
+inferno-hyperscript@^3.6.4:
+  version "3.6.4"
+  resolved "https://registry.yarnpkg.com/inferno-hyperscript/-/inferno-hyperscript-3.6.4.tgz#f6f034236469d73e4fba3876bb20b181f2fa7e60"
   dependencies:
-    inferno "3.6.3"
-    inferno-shared "3.6.3"
-    inferno-vnode-flags "3.6.3"
+    inferno "3.6.4"
+    inferno-shared "3.6.4"
+    inferno-vnode-flags "3.6.4"
 
-inferno-mobx@^3.6.1:
-  version "3.6.3"
-  resolved "https://registry.yarnpkg.com/inferno-mobx/-/inferno-mobx-3.6.3.tgz#c153fb7322d5f96665aacbb81b88697c27635653"
+inferno-mobx@^3.6.4:
+  version "3.6.4"
+  resolved "https://registry.yarnpkg.com/inferno-mobx/-/inferno-mobx-3.6.4.tgz#426bcb610e0c9298c20a5ae53044717dd60fb21a"
   dependencies:
     hoist-non-inferno-statics "^1.1.3"
-    inferno "3.6.3"
-    inferno-component "3.6.3"
-    inferno-create-class "3.6.3"
-    inferno-create-element "3.6.3"
-    inferno-shared "3.6.3"
+    inferno "3.6.4"
+    inferno-component "3.6.4"
+    inferno-create-class "3.6.4"
+    inferno-create-element "3.6.4"
+    inferno-shared "3.6.4"
     mobx "*"
 
-inferno-shared@3.6.3:
-  version "3.6.3"
-  resolved "https://registry.yarnpkg.com/inferno-shared/-/inferno-shared-3.6.3.tgz#80ed278a03fbf3681a733d9d17207938e856dea7"
+inferno-shared@3.6.4:
+  version "3.6.4"
+  resolved "https://registry.yarnpkg.com/inferno-shared/-/inferno-shared-3.6.4.tgz#0a13e89ed45c527172d59747b31329487d5f3d7f"
 
-inferno-vnode-flags@3.6.3:
-  version "3.6.3"
-  resolved "https://registry.yarnpkg.com/inferno-vnode-flags/-/inferno-vnode-flags-3.6.3.tgz#1a1363d7d00ec769de044290f77bd36dd7ff31ad"
+inferno-vnode-flags@3.6.4:
+  version "3.6.4"
+  resolved "https://registry.yarnpkg.com/inferno-vnode-flags/-/inferno-vnode-flags-3.6.4.tgz#1237612232e22fc2de0346bcb3f802edbd347cae"
 
-inferno@3.6.3, inferno@^3.6.1:
-  version "3.6.3"
-  resolved "https://registry.yarnpkg.com/inferno/-/inferno-3.6.3.tgz#72fc2f0d6b847753e8a5c8b2479581b428654e73"
+inferno@3.6.4, inferno@^3.6.4:
+  version "3.6.4"
+  resolved "https://registry.yarnpkg.com/inferno/-/inferno-3.6.4.tgz#d36dee9c895530dca0e4a03648b2530531a7aa32"
   dependencies:
-    inferno-shared "3.6.3"
-    inferno-vnode-flags "3.6.3"
+    inferno-shared "3.6.4"
+    inferno-vnode-flags "3.6.4"
 
 infinity-agent@^2.0.0:
   version "2.0.3"
@@ -2876,7 +2876,7 @@ mkdirp@0.5.1, "mkdirp@>=0.5 0", mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.0:
   dependencies:
     minimist "0.0.8"
 
-mobx@*, mobx@^3.1.16:
+mobx@*, mobx@3.1.16:
   version "3.1.16"
   resolved "https://registry.yarnpkg.com/mobx/-/mobx-3.1.16.tgz#7ef06b6de7cba31d2ca872484d47ee36265d7768"
 
@@ -4103,7 +4103,7 @@ uglify-to-browserify@~1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/uglify-to-browserify/-/uglify-to-browserify-1.0.2.tgz#6e0924d6bda6b5afe349e39a6d632850a0f882b7"
 
-uglifyjs-webpack-plugin@^0.4.4:
+uglifyjs-webpack-plugin@^0.4.6:
   version "0.4.6"
   resolved "https://registry.yarnpkg.com/uglifyjs-webpack-plugin/-/uglifyjs-webpack-plugin-0.4.6.tgz#b951f4abb6bd617e66f63eb891498e391763e309"
   dependencies:
@@ -4221,16 +4221,16 @@ webpack-sources@^1.0.1:
     source-list-map "^2.0.0"
     source-map "~0.5.3"
 
-webpack@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/webpack/-/webpack-3.0.0.tgz#ee9bcebf21247f7153cb410168cab45e3a59d4d7"
+webpack@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/webpack/-/webpack-3.2.0.tgz#8b0cae0e1a9fd76bfbf0eab61a8c2ada848c312f"
   dependencies:
     acorn "^5.0.0"
     acorn-dynamic-import "^2.0.0"
     ajv "^5.1.5"
     ajv-keywords "^2.0.0"
     async "^2.1.2"
-    enhanced-resolve "^3.0.0"
+    enhanced-resolve "^3.3.0"
     escope "^3.6.0"
     interpret "^1.0.0"
     json-loader "^0.5.4"
@@ -4243,7 +4243,7 @@ webpack@^3.0.0:
     source-map "^0.5.3"
     supports-color "^3.1.0"
     tapable "~0.2.5"
-    uglifyjs-webpack-plugin "^0.4.4"
+    uglifyjs-webpack-plugin "^0.4.6"
     watchpack "^1.3.1"
     webpack-sources "^1.0.1"
     yargs "^6.0.0"
