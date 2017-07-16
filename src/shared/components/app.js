@@ -12,13 +12,13 @@ import {
     parseEmission,
 } from "../util";
 
-const onEvent = fn => e => {
+const cancelDefault = fn => e => {
     e.preventDefault();
     return fn(e);
 };
 
 const onFilterChange = (id, fn, proc) =>
-    onEvent(e => fn(id, proc(parseFloat(e.target.value))));
+    cancelDefault(e => fn(id, proc(parseFloat(e.target.value))));
 
 const procFreq = freq => freq * 1.0e6;
 const dispFreq = freq => freq / 1.0e6;
@@ -118,13 +118,13 @@ const FilterVisibility = observer(({visFlag, title, children}, {s}) => (
         className: classNames({
             active: (s.editFilters.vis & visFlag) !== 0,
         }),
-        onClick: onEvent(() => s.toggleFilterVis(visFlag)),
+        onClick: cancelDefault(() => s.toggleFilterVis(visFlag)),
         title,
     }, children)
 ));
 
 const Filters = (_, {s}) => (
-    h("form", {onSubmit: onEvent(() => s.commitFilters())}, [
+    h("form", {onSubmit: cancelDefault(() => s.commitFilters())}, [
         h("fieldset.form-group", null, [
             h("label", {htmlFor: "freqLower"}, "Lower frequency"),
             h("div.input-group", null, [
@@ -169,7 +169,7 @@ const SearchPane = (_, {s}) => h("div#search.pane", null, [
 ]);
 
 const SearchForm = ({search}, {s}) => (
-    h("form", {onSubmit: onEvent(() => s.search.commitFreq())}, [
+    h("form", {onSubmit: cancelDefault(() => s.search.commitFreq())}, [
         h(SearchInput, {search}),
         h(SearchSubmit, {search}),
     ])
@@ -187,7 +187,7 @@ const SearchInput = observer(({search}) => (
                 id: "searchFreq",
                 type: "text",
                 value: search.editFreq,
-                onInput: onEvent(e => search.changeFreq(e.target.value)),
+                onInput: cancelDefault(e => search.changeFreq(e.target.value)),
             }),
             h("div.input-group-addon", null, "MHz"),
         ]),
