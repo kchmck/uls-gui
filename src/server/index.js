@@ -61,6 +61,8 @@ function createRecordFetcher(db) {
 
             let prevLoc = null;
             let prevFreq = null;
+            let prevEmission = null;
+
             let loc = null;
             let freq = null;
 
@@ -98,18 +100,22 @@ function createRecordFetcher(db) {
 
                 if (fkey !== prevFreq) {
                     prevFreq = fkey;
+                    prevEmission = null;
 
                     freq = {
                         fkey: fkey,
                         power: row.power,
                         freq: row.frequency,
-                        emissions: new Set(),
+                        emissions: [],
                     };
 
                     loc.freqs.push(freq);
                 }
 
-                freq.emissions.add(row.emission);
+                if (row.emission !== prevEmission) {
+                    prevEmission = row.emission;
+                    freq.emissions.push(row.emission);
+                }
             }, err => {
                 if (err) {
                     reject(err);
