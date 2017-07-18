@@ -4,6 +4,8 @@ ifeq ($(NODE_ENV), production)
     SASS_FLAGS += --output-style compressed
 endif
 
+all: build-web
+
 static/css/%.css: styles/%.scss
 	mkdir -p $(dir $@)
 	node-sass $(SASS_FLAGS) $< >$@
