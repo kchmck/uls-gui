@@ -54,6 +54,7 @@ function initClient() {
             zoom: DEFAULT_ZOOM,
             draggableCursor: "default",
             disableDoubleClickZoom: true,
+            streetViewControl: false,
             styles: [
                 {
                     featureType: "poi",
