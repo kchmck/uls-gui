@@ -255,6 +255,7 @@ function MapState() {
                 map,
                 position: this.basePos,
                 draggable: true,
+                title: "Drag to change base location",
             });
 
             baseMarker.addListener("dragend", () => {
