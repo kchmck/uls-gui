@@ -53,7 +53,7 @@ function createBrowserConf() {
         path: path.resolve(__dirname, "static/js"),
         filename: "app.js",
     }, createRules({
-        browsers: "firefox >= 54",
+        browsers: process.env.BROWSER || "firefox >= 54, chrome >= 59",
     }), createPlugins([
         new webpack.EnvironmentPlugin({
             NODE_ENV: "development",
