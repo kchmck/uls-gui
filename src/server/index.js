@@ -51,7 +51,7 @@ function initServer() {
         yield this.render("index", {state, sidebar});
     });
 
-    app.listen(3000);
+    app.listen(9428);
 }
 
 function createRecordFetcher(db) {
