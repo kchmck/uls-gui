@@ -246,7 +246,10 @@ const Tab = ({active, ...props}) => h("li.nav-item", null,
     h(Link, Object.assign(props, {className: classNames("nav-link", {active})})));
 
 const SidebarTabs = observer((_, {s}) => h("nav", null, h("ul.nav.nav-tabs", [
-    h(Tab, {active: s.curTab === "info", mergePath: "/info"}, "Info"),
+    h(Tab, {
+        active: s.curTab === "info",
+        mergePath: s.curLoc ? `/info/${s.curLoc.lkey}` : "/info"
+    }, "Info"),
     h(Tab, {active: s.curTab === "list", mergePath: "/list"}, "List"),
     h(Tab, {active: s.curTab === "filters", mergePath: "/filters"}, "Filters"),
     h(Tab, {active: s.curTab === "search", mergePath: "/search"}, "Search"),
