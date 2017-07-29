@@ -219,7 +219,7 @@ export function State(hist) {
 const createDefaultFilters = () => ({
     freqLower: 0,
     freqUpper: 5000.0e6,
-    rxPower: -121.0,
+    rxPower: -110.0,
     vis: VIS.DEFAULT,
 });
 
