@@ -31,13 +31,8 @@ export function State(hist) {
         previewLoc: null,
         exitPreviewTimer: null,
 
-        filters: {
-            freqLower: 0,
-            freqUpper: 5000.0e6,
-            rxPower: -121.0,
-            vis: VIS.DEFAULT,
-        },
-        editFilters: {},
+        filters: createDefaultFilters(),
+        editFilters: createDefaultFilters(),
         locCat: observable.map(),
 
         curTab: "info",
@@ -46,6 +41,10 @@ export function State(hist) {
         curError: null,
 
         search: new SearchFormState(),
+
+        commonLoc: computed(() => ({
+            search: `?${qs.stringify(this.filters)}`,
+        })),
 
         setError: action(err => {
             this.curError = err;
@@ -83,7 +82,7 @@ export function State(hist) {
                 vis: isNaN(vis) ? this.filters.vis : vis,
             });
 
-            this.editFilters = Object.assign({}, this.filters);
+            Object.assign(this.editFilters, this.filters);
         }),
 
         changeFilter: action((filter, value) => {
@@ -132,9 +131,8 @@ export function State(hist) {
         }),
 
         commitFilters: action(() => {
-            hist.push(Object.assign({}, hist.location, {
-                search: `?${qs.stringify(this.editFilters)}`
-            }));
+            Object.assign(this.filters, this.editFilters);
+            hist.push(Object.assign({}, hist.location, this.commonLoc));
         }),
 
         searchLocs: computed(() => {
@@ -217,6 +215,13 @@ export function State(hist) {
 
     this.setDocTitle("Initializing...");
 }
+
+const createDefaultFilters = () => ({
+    freqLower: 0,
+    freqUpper: 5000.0e6,
+    rxPower: -121.0,
+    vis: VIS.DEFAULT,
+});
 
 function SearchFormState() {
     extendObservable(this, {

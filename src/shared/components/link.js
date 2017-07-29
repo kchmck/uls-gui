@@ -1,19 +1,19 @@
 import Component from "inferno-component";
+import {observer} from "inferno-mobx";
 import h from "inferno-hyperscript";
 
-export class Link extends Component {
+export const Link = observer(class extends Component {
     constructor(props, context) {
         super(props, context);
 
-        this.componentWillUpdate(props);
         this.onClick = this.onClick.bind(this);
     }
 
-    createLoc({mergePath, href}) {
-        let {hist} = this.context;
+    createLoc(commonLoc) {
+        let {mergePath, href} = this.props;
 
         if (mergePath !== undefined) {
-            let loc = Object.assign({}, hist.location);
+            let loc = Object.assign({}, commonLoc);
             loc.pathname = mergePath;
 
             return loc;
@@ -51,14 +51,12 @@ export class Link extends Component {
         e.preventDefault();
     }
 
-    componentWillUpdate(newProps) {
-        this.loc = this.createLoc(newProps);
-    }
-
     render() {
+        this.loc = this.createLoc(this.context.s.commonLoc);
+
         return h("a", Object.assign(this.props, {
             href: this.context.hist.createHref(this.loc),
             onClick: this.onClick,
         }));
     }
-}
+});
